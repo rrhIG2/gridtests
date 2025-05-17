@@ -83,8 +83,24 @@ public class LoginManager : MonoBehaviour
         StartCoroutine(databaseManager.Login(nickname, password, (response) =>
         {
             loginMessageText.text = response;
+
+            // Only update session if login is successful
+            if (response == "Login successful.")
+            {
+                // Store in SessionData
+                SessionData.UserId = databaseManager.LastUserId;
+                SessionData.Nickname = databaseManager.LastNickname;
+
+                Debug.Log($"✅ Session Stored: {SessionData.UserId}, {SessionData.Nickname}");
+
+                // Optional: Move to next scene
+                // SceneManager.LoadScene("ProfileScene");
+
+                Debug.Log("Sesion data " + SessionData.UserId + ", " + SessionData.Nickname);
+            }
         }));
     }
+
 
     /// <summary>
     /// Switch to Register Canvas

@@ -5,6 +5,10 @@ using System.Collections;
 
 public class DatabaseManager : MonoBehaviour
 {
+
+    public int LastUserId { get; private set; }
+    public string LastNickname { get; private set; }
+
     // Replace with your server URL
     private const string serverUrl = "https://ukfig2.sk/arcGis/";
 
@@ -83,10 +87,8 @@ public class DatabaseManager : MonoBehaviour
 
             if (response.message == "Login successful.")
             {
-                // Store in SessionData
-                SessionData.UserId = response.userId;
-                SessionData.Nickname = response.nickname;
-                Debug.Log($"✅ Session Stored: {SessionData.UserId}, {SessionData.Nickname}");
+                LastUserId = response.userId;
+                LastNickname = response.nickname;
             }
 
             callback(response.message);
