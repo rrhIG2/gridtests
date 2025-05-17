@@ -272,7 +272,7 @@ MonoBehaviour:
   cellSize: 1
   viewRadius: 20
   cameraTransform: {fileID: 961739753}
-  gridCellPrefab: {fileID: 0}
+  gridCellPrefab: {fileID: 4392769470145097117, guid: f0ef0057a30e4354ba3b51032b9a6674, type: 3}
   baseTransform: {fileID: 1263837744}
   gridParent: {fileID: 0}
 --- !u!4 &410122607
