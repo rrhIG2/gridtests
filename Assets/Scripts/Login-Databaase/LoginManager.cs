@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LoginManager : MonoBehaviour
 {
@@ -97,6 +98,7 @@ public class LoginManager : MonoBehaviour
                 // SceneManager.LoadScene("ProfileScene");
 
                 Debug.Log("Sesion data " + SessionData.UserId + ", " + SessionData.Nickname);
+                SceneManager.LoadScene("Tier_1");
             }
         }));
     }

@@ -8,7 +8,7 @@ public class GridCell : MonoBehaviour
     [SerializeField] private int y;
 
     [Header("Grid Data")]
-    [SerializeField] private int id;
+    [SerializeField] private int id;  //Toto malo byt id ownera ale je to id cellgridu v backende
     [SerializeField] private string owner;
 
     [Header("Label Settings")]
@@ -30,13 +30,14 @@ public class GridCell : MonoBehaviour
         renderer = GetComponent<Renderer>();
     }
 
-    /// <summary>
+
+        /// <summary>
     /// Called to set additional data received from the server
     /// </summary>
     /// <param name="data">GridData object containing id, x, y, and owner</param>
     public void SetData(GridData data)
     {
-        this.id = data.id;
+        this.id = data.id;  
         this.owner = data.ownerOfTheGrid;
 
         // Create the label if it doesn't exist
@@ -58,16 +59,18 @@ public class GridCell : MonoBehaviour
         // Update the label text
         label.text = $"ID: {id}\nOwner: {owner}\n(x: {x}, y: {y})";
 
-        // ✅ Change color based on ownership
-        if (!string.IsNullOrEmpty(owner))
-        {
-            SetColor(Color.green); // Owned grids are green
-        }
-        else
-        {
-            SetColor(Color.gray); // Unowned grids are gray
-        }
+            Debug.Log("Sesionid " + SessionData.UserId + " id " + id);
+            // ✅ Change color based on ownership
+            if (SessionData.Nickname.ToString() == owner)
+            {
+                SetColor(Color.green); // Owned by current user
+            }
+            else
+            {
+                SetColor(new Color(1f, 0.65f, 0f)); // Orange color
+            }
     }
+
 
     /// <summary>
     /// Sets the color of the grid cell
