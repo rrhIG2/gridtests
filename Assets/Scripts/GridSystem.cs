@@ -102,7 +102,7 @@ void CreateGridCell(Vector2Int gridPos, Vector2Int baseGridPosition)
     if (cachedData.TryGetValue(gridPos, out GridData gridData))
     {
         cellScript.SetData(gridData);
-        Debug.Log($"💾 Applied cached data to GridCell [{gridPos.x}, {gridPos.y}] - ID: {gridData.id}, Owner: {gridData.ownerOfTheGrid}");
+        Debug.Log($"💾 Applied cached data to GridCell [{gridPos.x}, {gridPos.y}] - ID: {gridData.ownerOfTheGridId}, Owner: {gridData.ownerOfTheGridNickname}");
     }
 
     activeCells.Add(gridPos, gridCell);
@@ -176,7 +176,7 @@ void CreateGridCell(Vector2Int gridPos, Vector2Int baseGridPosition)
             if (!cachedData.ContainsKey(gridPos))
             {
                 cachedData[gridPos] = gridData;
-                Debug.Log($"🗂 Cached data for Grid [{gridPos.x}, {gridPos.y}] - Owner: {gridData.ownerOfTheGrid}");
+                Debug.Log($"🗂 Cached data for Grid [{gridPos.x}, {gridPos.y}] - Owner: {gridData.ownerOfTheGridId}");
             }
 
             // ✅ If the cell is already active, we update it immediately
@@ -204,7 +204,7 @@ public void LogDictionaries()
     Debug.Log("=== Cached Data ===");
     foreach (var data in cachedData)
     {
-        Debug.Log($"[Position: {data.Key}] -> GridData: ID: {data.Value.id}, Owner: {data.Value.ownerOfTheGrid}");
+        Debug.Log($"[Position: {data.Key}] -> GridData: ID: {data.Value.id}, Owner: {data.Value.ownerOfTheGridId}");
     }
     Debug.Log("====================");
 }

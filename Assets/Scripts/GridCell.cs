@@ -8,8 +8,8 @@ public class GridCell : MonoBehaviour
     [SerializeField] private int y;
 
     [Header("Grid Data")]
-    [SerializeField] private int id;  //Toto malo byt id ownera ale je to id cellgridu v backende
-    [SerializeField] private string owner;
+    [SerializeField] private int idOfOwner;  
+    [SerializeField] private string ownerNickname;
 
     [Header("Label Settings")]
     private TextMeshPro label;
@@ -37,8 +37,8 @@ public class GridCell : MonoBehaviour
     /// <param name="data">GridData object containing id, x, y, and owner</param>
     public void SetData(GridData data)
     {
-        this.id = data.id;  
-        this.owner = data.ownerOfTheGrid;
+        idOfOwner = data.ownerOfTheGridId;  
+        ownerNickname = data.ownerOfTheGridNickname;
 
         // Create the label if it doesn't exist
         if (label == null)
@@ -57,11 +57,11 @@ public class GridCell : MonoBehaviour
         }
 
         // Update the label text
-        label.text = $"ID: {id}\nOwner: {owner}\n(x: {x}, y: {y})";
+        label.text = $"ID: {idOfOwner}\nOwner: {ownerNickname}\n(x: {x}, y: {y})";
 
-            Debug.Log("Sesionid " + SessionData.UserId + " id " + id);
+            Debug.Log("Sesionid " + SessionData.UserId + " id " + idOfOwner);
             // ✅ Change color based on ownership
-            if (SessionData.Nickname.ToString() == owner)
+            if (SessionData.UserId == idOfOwner)
             {
                 SetColor(Color.green); // Owned by current user
             }
