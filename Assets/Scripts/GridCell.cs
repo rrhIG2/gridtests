@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using System;
 
 public class GridCell : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class GridCell : MonoBehaviour
 
     [Header("Production Info")]
     [SerializeField] private double materialMining;
-    [SerializeField] private string productionType;
+    [SerializeField] private GridInfoUI.MaterialType productionType;
 
     [Header("Label Settings")]
     private TextMeshPro label;
@@ -64,10 +65,18 @@ public class GridCell : MonoBehaviour
         MaterialPotentialWater = data.material_potential_water;
 
         materialMining = data.material_mining ?? 0;
-        productionType = data.production_type ?? "None";
-
-        // ✅ Change color based on ownership
-        SetColor(SessionData.UserId == idOfOwner ? Color.green : new Color(1f, 0.65f, 0f));
+    // ✅ Parse the string to the enum
+        if (Enum.TryParse(data.production_type, true, out GridInfoUI.MaterialType parsedType))
+        {
+            productionType = parsedType;
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ Could not parse production type: {data.production_type}. Defaulting to None.");
+            productionType = GridInfoUI.MaterialType.None; // Assuming "None" exists in your enum
+        }
+            // ✅ Change color based on ownership
+            SetColor(SessionData.UserId == idOfOwner ? Color.green : new Color(1f, 0.65f, 0f));
     }
 
     private void SetColor(Color color)

@@ -1,10 +1,12 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class GridInfoUI : MonoBehaviour
 {
     [Header("UI Elements")]
+    [SerializeField] private TextMeshProUGUI GridCoordinates;
     [SerializeField] private TextMeshProUGUI potentialValueOfWood;
     [SerializeField] private Button startProductionWood;
 
@@ -35,9 +37,34 @@ public class GridInfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI potentialValueOfWater;
     [SerializeField] private Button startProductionWater;
 
+    [SerializeField] private Button tier_3;
+
+
     [SerializeField] private Canvas infoCanvas;
 
     private GridCell currentGridCell;
+
+    [SerializeField] private DatabaseManager databaseManager;
+
+    public enum MaterialType
+    {
+        None,
+        Wood,
+        Stone,
+        Iron,
+        Gold,
+        Copper,
+        Coal,
+        Oil,
+        Uranium,
+        Food,
+        Water,
+        Tier_3
+    }
+
+    public int current_X;
+    public int current_Y;
+
 
     private void Awake()
     {
@@ -50,16 +77,18 @@ public class GridInfoUI : MonoBehaviour
         infoCanvas.enabled = false;
 
         // Assign button listeners
-        startProductionWood.onClick.AddListener(() => OnStartProductionButtonClick("wood"));
-        startProductionStone.onClick.AddListener(() => OnStartProductionButtonClick("stone"));
-        startProductionIron.onClick.AddListener(() => OnStartProductionButtonClick("iron"));
-        startProductionGold.onClick.AddListener(() => OnStartProductionButtonClick("gold"));
-        startProductionCopper.onClick.AddListener(() => OnStartProductionButtonClick("copper"));
-        startProductionCoal.onClick.AddListener(() => OnStartProductionButtonClick("coal"));
-        startProductionOil.onClick.AddListener(() => OnStartProductionButtonClick("oil"));
-        startProductionUranium.onClick.AddListener(() => OnStartProductionButtonClick("uranium"));
-        startProductionFood.onClick.AddListener(() => OnStartProductionButtonClick("food"));
-        startProductionWater.onClick.AddListener(() => OnStartProductionButtonClick("water"));
+        startProductionWood.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Wood));
+        startProductionStone.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Stone));
+        startProductionIron.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Iron));
+        startProductionGold.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Gold));
+        startProductionCopper.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Copper));
+        startProductionCoal.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Coal));
+        startProductionOil.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Oil));
+        startProductionUranium.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Uranium));
+        startProductionFood.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Food));
+        startProductionWater.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Water));
+        tier_3.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Tier_3));
+
     }
 
     /// <summary>
@@ -71,6 +100,7 @@ public class GridInfoUI : MonoBehaviour
         infoCanvas.enabled = true;
 
         // Populate UI elements with values from GridCell
+        GridCoordinates.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
         potentialValueOfWood.text = $"Wood: {gridCell.MaterialPotentialWood}";
         potentialValueOfStone.text = $"Stone: {gridCell.MaterialPotentialStone}";
         potentialValueOfIron.text = $"Iron: {gridCell.MaterialPotentialIron}";
@@ -81,6 +111,9 @@ public class GridInfoUI : MonoBehaviour
         potentialValueOfUranium.text = $"Uranium: {gridCell.MaterialPotentialUranium}";
         potentialValueOfFood.text = $"Food: {gridCell.MaterialPotentialFood}";
         potentialValueOfWater.text = $"Water: {gridCell.MaterialPotentialWater}";
+
+        current_X = gridCell.X;
+        current_Y = gridCell.Y;
     }
 
     /// <summary>
@@ -94,16 +127,24 @@ public class GridInfoUI : MonoBehaviour
     /// <summary>
     /// Called when the Start Production button is clicked
     /// </summary>
-    public void OnStartProductionButtonClick(string material)
+    public void OnStartProductionButtonClick(MaterialType material)
+{
+    int xCoordinate = current_X;
+    int yCoordinate = current_Y;
+    int playerId = SessionData.UserId;
+
+    if (currentGridCell == null)
     {
-        if (currentGridCell == null)
-        {
-            Debug.LogError("⚠️ No Grid Data available to start production.");
-            return;
-        }
-
-        Debug.Log($"🏭 Starting production on Grid ID: {currentGridCell.X}, {currentGridCell.Y} for Material: {material}");
-
-        // 🚀 Call the backend or logic to start production here
+        Debug.LogError("⚠️ No Grid Data available to start production.");
+        return;
     }
+
+    Debug.Log($"🏭 Starting production on Grid Coordinates: X={xCoordinate}, Y={yCoordinate} for Material: {material}");
+
+    // 🚀 Call the backend to start production
+    double miningRate = (material == MaterialType.Tier_3) ? 0 : 10;
+
+    StartCoroutine(databaseManager.SendStartProductionRequest(xCoordinate, yCoordinate, playerId, material, miningRate));
+}
+
 }

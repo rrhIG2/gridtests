@@ -105,50 +105,91 @@ public class DatabaseManager : MonoBehaviour
     // 🆕 Fetch Grid Data
     // ========================
     public IEnumerator FetchGridData(List<Vector2Int> gridPositions, System.Action<List<GridData>> callback)
-{
-    if (gridPositions == null || gridPositions.Count == 0)
     {
-        Debug.LogError("❌ No grid positions to send to the backend!");
-        callback(null);
-        yield break;
+        if (gridPositions == null || gridPositions.Count == 0)
+        {
+            Debug.LogError("❌ No grid positions to send to the backend!");
+            callback(null);
+            yield break;
+        }
+
+        // Serialize the grid positions to JSON
+        string json = JsonConvert.SerializeObject(gridPositions);
+        Debug.Log($"📤 Sending Grid Data Request: {json}");
+
+        // Prepare the web request
+        UnityWebRequest request = new UnityWebRequest(serverUrl + "getGridData.php", "POST");
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        // Wait for response
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log($"📥 Received Grid Data Response: {request.downloadHandler.text}");
+
+            if (request.downloadHandler.text.StartsWith("<"))
+            {
+                Debug.LogError("❌ Received HTML instead of JSON. There might be a PHP error.");
+                callback(null);
+                yield break;
+            }
+
+            // Deserialize the response into a list of GridData
+            List<GridData> gridDataList = JsonConvert.DeserializeObject<List<GridData>>(request.downloadHandler.text);
+
+            // Return the data through the callback
+            callback(gridDataList);
+        }
+        else
+        {
+            Debug.LogError($"❌ Error: {request.error}");
+            callback(null);
+        }
     }
 
-    // Serialize the grid positions to JSON
-    string json = JsonConvert.SerializeObject(gridPositions);
-    Debug.Log($"📤 Sending Grid Data Request: {json}");
+    public IEnumerator SendStartProductionRequest(int gridX, int gridY, int playerId, GridInfoUI.MaterialType material, double miningRate)
+{
+    string fullUrl = $"{serverUrl}startProduction.php";
 
-    // Prepare the web request
-    UnityWebRequest request = new UnityWebRequest(serverUrl + "getGridData.php", "POST");
+    // Create the data object
+    var requestData = new
+    {
+        grid_x = gridX,
+        grid_y = gridY,
+        player_id = playerId,
+        material = material.ToString(),
+        mining_rate = miningRate
+    };
+
+    // Convert it to JSON
+    string json = JsonConvert.SerializeObject(requestData);
+
+    Debug.Log($"📤 Sending Start Production Request: {json}");
+
+    // Create the request
+    UnityWebRequest request = new UnityWebRequest(fullUrl, "POST");
     byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
     request.uploadHandler = new UploadHandlerRaw(bodyRaw);
     request.downloadHandler = new DownloadHandlerBuffer();
     request.SetRequestHeader("Content-Type", "application/json");
 
-    // Wait for response
+    // Send the request and wait for a response
     yield return request.SendWebRequest();
 
-    if (request.result == UnityWebRequest.Result.Success)
-    {
-        Debug.Log($"📥 Received Grid Data Response: {request.downloadHandler.text}");
-
-        if (request.downloadHandler.text.StartsWith("<"))
+        if (request.result == UnityWebRequest.Result.Success)
         {
-            Debug.LogError("❌ Received HTML instead of JSON. There might be a PHP error.");
-            callback(null);
-            yield break;
+            Debug.Log($"✅ Production started successfully: {request.downloadHandler.text}");
+        
+    }
+        else
+        {
+            Debug.LogError($"❌ Failed to start production: {request.error}");
+            Debug.LogError($"🔎 Response: {request.downloadHandler.text}");
         }
-
-        // Deserialize the response into a list of GridData
-        List<GridData> gridDataList = JsonConvert.DeserializeObject<List<GridData>>(request.downloadHandler.text);
-
-        // Return the data through the callback
-        callback(gridDataList);
-    }
-    else
-    {
-        Debug.LogError($"❌ Error: {request.error}");
-        callback(null);
-    }
 }
 
 }
