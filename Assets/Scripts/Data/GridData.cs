@@ -43,5 +43,5 @@ public class GridData
 
     // Mining and production
     public double? material_mining;
-    public string? production_type;
+    public string production_type;
 }

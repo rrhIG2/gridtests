@@ -2,215 +2,211 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
 
 public class GridSystem : MonoBehaviour
 {
     [Header("Grid Settings")]
-    public float cellSize = 1f;
-    public int viewRadius = 5;
-    public Transform cameraTransform;
-    public GameObject gridCellPrefab;
-    public Transform baseTransform;
-    public Transform gridParent;
+    [SerializeField] private float _cellSize = 1f;
+    [SerializeField] private int _viewRadius = 5;
+    [SerializeField] private Transform _cameraTransform;
+    [SerializeField] private GameObject _gridCellPrefab;
+    [SerializeField] private Transform _baseTransform;
+    [SerializeField] private Transform _gridParent;
 
     [Header("References")]
-    public DatabaseManager databaseManager;
+    [SerializeField] private DatabaseManager _databaseManager;
 
-    [SerializeField] private Dictionary<Vector2Int, GameObject> activeCells = new Dictionary<Vector2Int, GameObject>();
-    [SerializeField] private Dictionary<Vector2Int, GridData> cachedData = new Dictionary<Vector2Int, GridData>();
-    private Vector2Int lastCameraPosition;
+    private Dictionary<Vector2Int, GameObject> _activeCells = new();
+    private Dictionary<Vector2Int, GridData> _cachedData = new();
+    private Vector2Int _lastCameraPosition;
 
-    void Start()
+    private void Start()
     {
-        if (gridParent == null)
+        if (_gridParent == null)
         {
-            GameObject gridParentObject = new GameObject("GridCells");
-            gridParent = gridParentObject.transform;
+            GameObject gridParentObject = new("GridCells");
+            _gridParent = gridParentObject.transform;
         }
 
-        lastCameraPosition = GetGridPosition(cameraTransform.position);
-
-        // Create visible cells immediately
+        _lastCameraPosition = GetGridPosition(_cameraTransform.position);
         UpdateVisibleCells();
-
-        // After 10 seconds, fetch the initial data
         StartCoroutine(FetchAndCacheData());
     }
 
-    void Update()
+    private void Update()
     {
-        Vector2Int currentPos = GetGridPosition(cameraTransform.position);
+        Vector2Int currentPos = GetGridPosition(_cameraTransform.position);
 
-        if (currentPos != lastCameraPosition)
+        if (currentPos != _lastCameraPosition)
         {
             UpdateVisibleCells();
-            lastCameraPosition = currentPos;
+            _lastCameraPosition = currentPos;
 
-            // Fetch new data if we moved outside the cache area
             if (!IsInCache(currentPos))
             {
                 Debug.Log("🛰 Outside of cache. Fetching more data...");
                 StartCoroutine(FetchAndCacheData());
             }
         }
-        if (Input.GetKeyDown(KeyCode.L))
-    {
-        LogDictionaries();
-    }
+
+        if (Input.GetKeyDown(KeyCode.L)) LogDictionaries();
+        if (Input.GetKeyDown(KeyCode.K)) LogActiveCells();
+
+        StartCoroutine(MiningRoutine());
     }
 
-    void UpdateVisibleCells()
+    private void UpdateVisibleCells()
     {
-        Vector2Int cameraGridPosition = GetGridPosition(cameraTransform.position);
-        Vector2Int baseGridPosition = GetGridPosition(baseTransform.position);
+        Vector2Int cameraGridPos = GetGridPosition(_cameraTransform.position);
+        Vector2Int baseGridPos = GetGridPosition(_baseTransform.position);
 
-        for (int x = -viewRadius; x <= viewRadius; x++)
+        for (int x = -_viewRadius; x <= _viewRadius; x++)
         {
-            for (int y = -viewRadius; y <= viewRadius; y++)
+            for (int y = -_viewRadius; y <= _viewRadius; y++)
             {
-                Vector2Int gridPos = new Vector2Int(cameraGridPosition.x + x, cameraGridPosition.y + y);
+                Vector2Int gridPos = new(cameraGridPos.x + x, cameraGridPos.y + y);
 
-                if (!activeCells.ContainsKey(gridPos))
-                {
-                    CreateGridCell(gridPos, baseGridPosition);
-                }
+                if (!_activeCells.ContainsKey(gridPos))
+                    CreateGridCell(gridPos, baseGridPos);
             }
         }
     }
 
-    Vector2Int GetGridPosition(Vector3 worldPosition)
+    private Vector2Int GetGridPosition(Vector3 worldPos)
     {
-        int x = Mathf.FloorToInt(worldPosition.x / cellSize);
-        int y = Mathf.FloorToInt(worldPosition.z / cellSize);
+        int x = Mathf.FloorToInt(worldPos.x / _cellSize);
+        int y = Mathf.FloorToInt(worldPos.z / _cellSize);
         return new Vector2Int(x, y);
     }
 
-void CreateGridCell(Vector2Int gridPos, Vector2Int baseGridPosition)
-{
-    Vector3 worldPosition = new Vector3(gridPos.x * cellSize, 0, gridPos.y * cellSize);
-    GameObject gridCell = Instantiate(gridCellPrefab, worldPosition, Quaternion.identity, gridParent);
-    gridCell.name = $"GridCell_{gridPos.x}_{gridPos.y}";
-
-    int localX = gridPos.x - baseGridPosition.x;
-    int localY = gridPos.y - baseGridPosition.y;
-
-    GridCell cellScript = gridCell.GetComponent<GridCell>();
-    cellScript.Initialize(localX, localY);
-
-    // ✅ If data exists in cache, apply it immediately
-    if (cachedData.TryGetValue(gridPos, out GridData gridData))
+    private void CreateGridCell(Vector2Int gridPos, Vector2Int baseGridPos)
     {
-        cellScript.SetData(gridData);
-        Debug.Log($"💾 Applied cached data to GridCell [{gridPos.x}, {gridPos.y}] - ID: {gridData.ownerOfTheGridId}, Owner: {gridData.ownerOfTheGridNickname}");
+        Vector3 worldPos = new(gridPos.x * _cellSize, 0, gridPos.y * _cellSize);
+        GameObject cell = Instantiate(_gridCellPrefab, worldPos, Quaternion.identity, _gridParent);
+        cell.name = $"GridCell_{gridPos.x}_{gridPos.y}";
+
+        int localX = gridPos.x - baseGridPos.x;
+        int localY = gridPos.y - baseGridPos.y;
+
+        GridCell script = cell.GetComponent<GridCell>();
+        script.Initialize(localX, localY);
+
+        if (_cachedData.TryGetValue(gridPos, out GridData data))
+        {
+            script.SetData(data);
+            Debug.Log($"💾 Applied cached data to GridCell [{gridPos.x}, {gridPos.y}] - ID: {data.ownerOfTheGridId}, Owner: {data.ownerOfTheGridNickname}");
+        }
+
+        _activeCells[gridPos] = cell;
     }
 
-    activeCells.Add(gridPos, gridCell);
-}
-
-
-    bool IsInCache(Vector2Int position)
+    private bool IsInCache(Vector2Int pos)
     {
-        for (int x = -viewRadius * 2; x <= viewRadius * 2; x++)
+        for (int x = -_viewRadius * 2; x <= _viewRadius * 2; x++)
         {
-            for (int y = -viewRadius * 2; y <= viewRadius * 2; y++)
+            for (int y = -_viewRadius * 2; y <= _viewRadius * 2; y++)
             {
-                Vector2Int checkPos = new Vector2Int(position.x + x, position.y + y);
-                if (!cachedData.ContainsKey(checkPos))
-                {
-                    return false;
-                }
+                Vector2Int check = new(pos.x + x, pos.y + y);
+                if (!_cachedData.ContainsKey(check)) return false;
             }
         }
         return true;
     }
 
-    IEnumerator FetchAndCacheData()
-{
-    Debug.Log("⏳ Waiting 1 seconds before fetching grid data...");
-    yield return new WaitForSeconds(1); // Wait for 10 seconds
-
-    if (cameraTransform == null || databaseManager == null)
+    private IEnumerator FetchAndCacheData()
     {
-        Debug.LogError("❌ Missing required components.");
-        yield break;
+        Debug.Log("⏳ Waiting 1 second before fetching grid data...");
+        yield return new WaitForSeconds(1);
+
+        if (_cameraTransform == null || _databaseManager == null)
+        {
+            Debug.LogError("❌ Missing required components.");
+            yield break;
+        }
+
+        List<Vector2Int> fetchList = new();
+        Vector2Int camPos = GetGridPosition(_cameraTransform.position);
+
+        for (int x = -_viewRadius * 2; x <= _viewRadius * 2; x++)
+        {
+            for (int y = -_viewRadius * 2; y <= _viewRadius * 2; y++)
+            {
+                Vector2Int pos = new(camPos.x + x, camPos.y + y);
+                if (!_cachedData.ContainsKey(pos)) fetchList.Add(pos);
+            }
+        }
+
+        if (fetchList.Count == 0)
+        {
+            Debug.Log("🟢 All grids are already cached.");
+            yield break;
+        }
+
+        Debug.Log($"📤 Fetching data for {fetchList.Count} grid positions...");
+        yield return StartCoroutine(_databaseManager.FetchGridData(fetchList, (gridList) =>
+        {
+            if (gridList == null)
+            {
+                Debug.LogError("❌ Fetch failed, gridDataList is null.");
+                return;
+            }
+
+            foreach (var data in gridList)
+            {
+                Vector2Int pos = new(data.grid_x, data.grid_y);
+                if (!_cachedData.ContainsKey(pos)) _cachedData[pos] = data;
+
+                if (_activeCells.TryGetValue(pos, out GameObject obj))
+                {
+                    GridCell script = obj.GetComponent<GridCell>();
+                    script.SetData(data);
+                    Debug.Log($"🔄 Updated active cell [{pos.x}, {pos.y}] with new data.");
+                }
+            }
+        }));
     }
 
-    // Prepare a list to hold the visible grids
-    List<Vector2Int> visibleGrids = new List<Vector2Int>();
-    Vector2Int cameraGridPosition = GetGridPosition(cameraTransform.position);
-
-    for (int x = -viewRadius * 2; x <= viewRadius * 2; x++)
+    public void LogDictionaries()
     {
-        for (int y = -viewRadius * 2; y <= viewRadius * 2; y++)
-        {
-            Vector2Int gridPos = new Vector2Int(cameraGridPosition.x + x, cameraGridPosition.y + y);
+        Debug.Log($"🔍 Active Cells Count: {_activeCells.Count}");
+        foreach (var cell in _activeCells)
+            Debug.Log($"[Pos: {cell.Key}] -> GameObject: {cell.Value.name}");
 
-            if (!cachedData.ContainsKey(gridPos))
+        Debug.Log($"🔍 Cached Data Count: {_cachedData.Count}");
+        foreach (var data in _cachedData)
+            Debug.Log($"[Pos: {data.Key}] -> GridData: ID: {data.Value.id}, Owner: {data.Value.ownerOfTheGridId}");
+    }
+
+    private void LogActiveCells()
+    {
+        Debug.Log($"🔎 Active Cells ({_activeCells.Count} total):");
+
+        foreach (var pair in _activeCells)
+        {
+            GridCell script = pair.Value.GetComponent<GridCell>();
+            if (script != null)
             {
-                visibleGrids.Add(gridPos);
+                Debug.Log($"📌 Grid Position: {pair.Key} | Production: {script.productionType} | Rate: {script.materialMining} | Wood: {script.MaterialActualWood}");
             }
         }
     }
 
-    if (visibleGrids.Count == 0)
+    private IEnumerator MiningRoutine()
     {
-        Debug.Log("🟢 All grids are already cached.");
-        yield break;
-    }
-
-    Debug.Log($"📤 Fetching data for {visibleGrids.Count} grid positions...");
-    yield return StartCoroutine(databaseManager.FetchGridData(visibleGrids, (gridDataList) =>
-    {
-        if (gridDataList == null)
+        while (true)
         {
-            Debug.LogError("❌ Fetch failed, gridDataList is null.");
-            return;
-        }
+            yield return new WaitForSeconds(10f);
 
-        foreach (var gridData in gridDataList)
-        {
-            Vector2Int gridPos = new Vector2Int(gridData.grid_x, gridData.grid_y);
-
-            // ✅ Cache the data if it's not already there
-            if (!cachedData.ContainsKey(gridPos))
+            foreach (var cell in _activeCells)
             {
-                cachedData[gridPos] = gridData;
-                Debug.Log($"🗂 Cached data for Grid [{gridPos.x}, {gridPos.y}] - Owner: {gridData.ownerOfTheGridId}");
-            }
+                GridCell script = cell.Value.GetComponent<GridCell>();
 
-            // ✅ If the cell is already active, we update it immediately
-            if (activeCells.TryGetValue(gridPos, out GameObject cellObject))
-            {
-                GridCell cellScript = cellObject.GetComponent<GridCell>();
-                cellScript.SetData(gridData);
-                Debug.Log($"🔄 Updated active cell [{gridPos.x}, {gridPos.y}] with new data.");
+                if (script != null && script.productionType != GridInfoUI.MaterialType.None)
+                {
+                    MaterialStorage.Instance.AddToStorage(script.productionType, script.materialMining);
+                    StartCoroutine(_databaseManager.UpdateMaterialOnBackend(script.X, script.Y, script.productionType, script.materialMining));
+                }
             }
         }
-    }));
-}
-
-
-public void LogDictionaries()
-{
-    Debug.Log($"🔍 Active Cells Count: {activeCells.Count}");
-    Debug.Log("=== Active Cells ===");
-    foreach (var cell in activeCells)
-    {
-        Debug.Log($"[Position: {cell.Key}] -> GameObject: {cell.Value.name}");
     }
-
-    Debug.Log($"🔍 Cached Data Count: {cachedData.Count}");
-    Debug.Log("=== Cached Data ===");
-    foreach (var data in cachedData)
-    {
-        Debug.Log($"[Position: {data.Key}] -> GridData: ID: {data.Value.id}, Owner: {data.Value.ownerOfTheGridId}");
-    }
-    Debug.Log("====================");
 }
-
-}
-
-
-
-
