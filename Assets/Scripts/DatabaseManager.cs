@@ -154,7 +154,7 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    public IEnumerator SendStartProductionRequest(int gridX, int gridY, int playerId, GridInfoUI.MaterialType material, double miningRate)
+    public IEnumerator SendStartProductionRequest(int gridX, int gridY, int playerId, MaterialType material, double miningRate)
     {
         string fullUrl = $"{_serverUrl}startProduction.php";
 
@@ -189,7 +189,7 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    public IEnumerator UpdateMaterialOnBackend(int gridX, int gridY, GridInfoUI.MaterialType material, double minedAmount)
+    public IEnumerator UpdateMaterialOnBackend(int gridX, int gridY, MaterialType material, double minedAmount)
     {
         var requestData = new
         {

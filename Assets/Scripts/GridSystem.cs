@@ -52,7 +52,6 @@ public class GridSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.L)) LogDictionaries();
         if (Input.GetKeyDown(KeyCode.K)) LogActiveCells();
 
-        StartCoroutine(MiningRoutine());
     }
 
     private void UpdateVisibleCells()
@@ -186,27 +185,10 @@ public class GridSystem : MonoBehaviour
             GridCell script = pair.Value.GetComponent<GridCell>();
             if (script != null)
             {
-                Debug.Log($"📌 Grid Position: {pair.Key} | Production: {script.productionType} | Rate: {script.materialMining} | Wood: {script.MaterialActualWood}");
+               // Debug.Log($"📌 Grid Position: {pair.Key} | Production: {script.productionType} | Rate: {script.materialMining} | Wood: {script.MaterialActualWood}");
             }
         }
     }
 
-    private IEnumerator MiningRoutine()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(10f);
-
-            foreach (var cell in _activeCells)
-            {
-                GridCell script = cell.Value.GetComponent<GridCell>();
-
-                if (script != null && script.productionType != GridInfoUI.MaterialType.None)
-                {
-                    MaterialStorage.Instance.AddToStorage(script.productionType, script.materialMining);
-                    StartCoroutine(_databaseManager.UpdateMaterialOnBackend(script.X, script.Y, script.productionType, script.materialMining));
-                }
-            }
-        }
-    }
+    
 }

@@ -415,16 +415,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aea7c226a38e074daac91c69022d7be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databaseManager: {fileID: 1923462184}
-  loginCanvas: {fileID: 1361154185}
-  registerCanvas: {fileID: 974825921}
-  nicknameInput: {fileID: 257592095}
-  passwordInput: {fileID: 2096069647}
-  loginMessageText: {fileID: 702897150}
-  nicknameRegisterInput: {fileID: 797128788}
-  passwordRegisterInput: {fileID: 1252821622}
-  passwordAgainRegisterInput: {fileID: 978912246}
-  registerMessageText: {fileID: 2034322492}
+  _databaseManager: {fileID: 1923462184}
+  _loginCanvas: {fileID: 1361154185}
+  _registerCanvas: {fileID: 974825921}
+  _nicknameInput: {fileID: 257592095}
+  _passwordInput: {fileID: 2096069647}
+  _loginMessageText: {fileID: 702897150}
+  _nicknameRegisterInput: {fileID: 797128788}
+  _passwordRegisterInput: {fileID: 1252821622}
+  _passwordAgainRegisterInput: {fileID: 978912246}
+  _registerMessageText: {fileID: 2034322492}
 --- !u!4 &121712692
 Transform:
   m_ObjectHideFlags: 0

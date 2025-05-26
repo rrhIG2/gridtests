@@ -2077,13 +2077,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf3f834b4499c354aa8607611c6278da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellSize: 1
-  viewRadius: 20
-  cameraTransform: {fileID: 961739753}
-  gridCellPrefab: {fileID: 4392769470145097117, guid: 798b0f69e65cbc64e8ab443e3d9a8190, type: 3}
-  baseTransform: {fileID: 1263837744}
-  gridParent: {fileID: 0}
-  databaseManager: {fileID: 319499149}
+  _cellSize: 1
+  _viewRadius: 5
+  _cameraTransform: {fileID: 961739753}
+  _gridCellPrefab: {fileID: 4392769470145097117, guid: 798b0f69e65cbc64e8ab443e3d9a8190, type: 3}
+  _baseTransform: {fileID: 1263837744}
+  _gridParent: {fileID: 0}
+  _databaseManager: {fileID: 319499149}
 --- !u!4 &410122607
 Transform:
   m_ObjectHideFlags: 0
@@ -3797,7 +3797,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1055394483}
-  - component: {fileID: 1055394482}
   m_Layer: 0
   m_Name: MaterialStorage
   m_TagString: Untagged
@@ -3805,18 +3804,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1055394482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1055394481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8cbfba5deb92d3f4fb8f0382fb6055a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1055394483
 Transform:
   m_ObjectHideFlags: 0

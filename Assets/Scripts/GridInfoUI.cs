@@ -46,22 +46,6 @@ public class GridInfoUI : MonoBehaviour
 
     [SerializeField] private DatabaseManager databaseManager;
 
-    public enum MaterialType
-    {
-        None,
-        Wood,
-        Stone,
-        Iron,
-        Gold,
-        Copper,
-        Coal,
-        Oil,
-        Uranium,
-        Food,
-        Water,
-        Tier_3
-    }
-
     public int current_X;
     public int current_Y;
 
@@ -131,7 +115,7 @@ public class GridInfoUI : MonoBehaviour
 {
     int xCoordinate = current_X;
     int yCoordinate = current_Y;
-    int playerId = SessionData.UserId;
+    int playerId = PlayerPrefs.GetInt("UserId");
 
     if (currentGridCell == null)
     {
@@ -144,7 +128,7 @@ public class GridInfoUI : MonoBehaviour
     // 🚀 Call the backend to start production
     double miningRate = (material == MaterialType.Tier_3) ? 0 : 10;
 
-    StartCoroutine(databaseManager.SendStartProductionRequest(xCoordinate, yCoordinate, playerId, material, miningRate));
+   // StartCoroutine(databaseManager.SendStartProductionRequest(xCoordinate, yCoordinate, playerId, material, miningRate));
 }
 
 }

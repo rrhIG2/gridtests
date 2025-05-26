@@ -1,77 +1,69 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.EventSystems;
 using System;
 
 public class GridCell : MonoBehaviour
 {
     [Header("Grid Coordinates")]
-    [SerializeField] private int x;
-    [SerializeField] private int y;
+    [SerializeField] private int _x;
+    [SerializeField] private int _y;
 
     [Header("Grid Data")]
-    [SerializeField] private int idOfOwner;
-    [SerializeField] private string ownerNickname;
+    [SerializeField] private int _idOfOwner;
+    [SerializeField] private string _ownerNickname;
 
     [Header("Material Data")]
     public double MaterialPotentialWood { get; private set; }
     public double MaterialActualWood { get; private set; }
-    
     public double MaterialPotentialStone { get; private set; }
     public double MaterialActualStone { get; private set; }
-    
     public double MaterialPotentialIron { get; private set; }
     public double MaterialActualIron { get; private set; }
-    
     public double MaterialPotentialGold { get; private set; }
     public double MaterialActualGold { get; private set; }
-    
     public double MaterialPotentialCopper { get; private set; }
     public double MaterialActualCopper { get; private set; }
-    
     public double MaterialPotentialCoal { get; private set; }
     public double MaterialActualCoal { get; private set; }
-    
     public double MaterialPotentialOil { get; private set; }
     public double MaterialActualOil { get; private set; }
-    
     public double MaterialPotentialUranium { get; private set; }
     public double MaterialActualUranium { get; private set; }
-    
     public double MaterialPotentialFood { get; private set; }
     public double MaterialActualFood { get; private set; }
-    
     public double MaterialPotentialWater { get; private set; }
     public double MaterialActualWater { get; private set; }
 
     [Header("Production Info")]
-    [SerializeField] public double materialMining;
-    [SerializeField] public GridInfoUI.MaterialType productionType;
+    [SerializeField] private double _materialMining;
+    [SerializeField] private MaterialType _productionType;
 
     [Header("Label Settings")]
-    private TextMeshPro label;
-    private Renderer renderer;
+    private TextMeshPro _label;
+    private Renderer _renderer;
 
-    // Reference to the UI
-    private GridInfoUI gridInfoUI;
+    private GridInfoUI _gridInfoUI;
 
-    public int X => x;
-    public int Y => y;
+    public int X => _x;
+    public int Y => _y;
+    public int IdOfOwner => _idOfOwner;
+    public string OwnerNickname => _ownerNickname;
+    public double MaterialMining => _materialMining;
+    public MaterialType ProductionType => _productionType;
 
     public void Initialize(int x, int y)
     {
-        this.x = x;
-        this.y = y;
-        renderer = GetComponent<Renderer>();
-        gridInfoUI = FindObjectOfType<GridInfoUI>();
+        _x = x;
+        _y = y;
+        _renderer = GetComponent<Renderer>();
+        _gridInfoUI = FindObjectOfType<GridInfoUI>();
     }
 
     public void SetData(GridData data)
     {
-        idOfOwner = data.ownerOfTheGridId ?? 0;
-        ownerNickname = data.ownerOfTheGridNickname;
+        _idOfOwner = data.ownerOfTheGridId ?? 0;
+        _ownerNickname = data.ownerOfTheGridNickname;
 
-        // Assign all materials and their actual amounts
         MaterialPotentialWood = data.material_potential_wood;
         MaterialActualWood = data.material_actual_wood;
 
@@ -102,58 +94,41 @@ public class GridCell : MonoBehaviour
         MaterialPotentialWater = data.material_potential_water;
         MaterialActualWater = data.material_actual_water;
 
-        materialMining = data.material_mining ?? 0;
+        _materialMining = data.material_mining ?? 0;
 
-        // ✅ Parse the string to the enum
-        if (Enum.TryParse(data.production_type, true, out GridInfoUI.MaterialType parsedType))
+        if (Enum.TryParse(data.production_type, true, out MaterialType parsedType))
         {
-            productionType = parsedType;
+            _productionType = parsedType;
         }
         else
         {
             Debug.LogWarning($"⚠️ Could not parse production type: {data.production_type}. Defaulting to None.");
-            productionType = GridInfoUI.MaterialType.None; // Assuming "None" exists in your enum
+            _productionType = MaterialType.None;
         }
-        
-        // ✅ Change color based on ownership
-        SetColor(SessionData.UserId == idOfOwner ? Color.green : new Color(1f, 0.65f, 0f));
+
+        SetColor(PlayerPrefs.GetInt("UserId", -1) == _idOfOwner ? Color.green : new Color(1f, 0.65f, 0f));
     }
 
     private void SetColor(Color color)
     {
-        if (renderer == null) renderer = GetComponent<Renderer>();
-        if (renderer != null) renderer.material.color = color;
+        if (_renderer == null) _renderer = GetComponent<Renderer>();
+        if (_renderer != null) _renderer.material.color = color;
     }
 
-
-    /// <summary>
-    /// Detects a touch or click event on the grid cell and opens the UI
-    /// </summary>
-    /*public void OnPointerClick(PointerEventData eventData)
+    private void Update()
     {
-        if (gridInfoUI != null)
+        if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log($"📌 Clicked on GridCell [{x}, {y}]");
-            gridInfoUI.Show(this);
-        }
-    }*/
-    
-void Update()
-{
-    if (Input.GetMouseButtonDown(0))
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            GridCell gridCell = hit.collider.GetComponent<GridCell>();
-            if (gridCell != null && gridInfoUI != null)
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Debug.Log($"📌 Click detected on: {gridCell.gameObject.name}");
-                gridInfoUI.Show(gridCell);
+                GridCell gridCell = hit.collider.GetComponent<GridCell>();
+                if (gridCell != null && _gridInfoUI != null)
+                {
+                    Debug.Log($"📌 Click detected on: {gridCell.gameObject.name}");
+                    _gridInfoUI.Show(gridCell);
+                }
             }
         }
     }
-}
-
-
 }
