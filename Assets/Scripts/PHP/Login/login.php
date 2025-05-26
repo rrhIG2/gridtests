@@ -4,8 +4,13 @@ include 'db_config.php';
 // Get JSON data from Unity
 $data = json_decode(file_get_contents('php://input'), true);
 
-$nickname = $data['nickname'];
-$password = $data['password'];
+$nickname = $data['nickname'] ?? null;
+$password = $data['password'] ?? null;
+
+if (empty($nickname) || empty($password)) {
+    echo json_encode(["message" => "❌ Nickname or password is empty."]);
+    exit();
+}
 
 // Check if the user exists
 $sql = "SELECT id, nickname FROM users WHERE nickname=? AND password=?";

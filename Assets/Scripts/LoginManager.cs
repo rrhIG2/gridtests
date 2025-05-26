@@ -89,7 +89,7 @@ public class LoginManager : MonoBehaviour
                 PlayerPrefs.Save(); // optional but ensures data is written immediately
 
                 Debug.Log($"✅ PlayerPrefs Stored: {PlayerPrefs.GetInt("UserId")}, {PlayerPrefs.GetString("Nickname")}");
-                SceneManager.LoadScene("Tier_1");
+                //SceneManager.LoadScene("Tier_1");
             }
         }));
     }

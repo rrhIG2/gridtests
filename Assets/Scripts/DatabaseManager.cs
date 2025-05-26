@@ -81,6 +81,13 @@ public class DatabaseManager : MonoBehaviour
             password = password
         };
 
+        if (string.IsNullOrEmpty(nickname) || string.IsNullOrEmpty(password))
+        {
+            Debug.LogError("❌ Nickname or password is empty!");
+            callback("Nickname or password is empty!");
+            yield break;
+        }
+
         string json = JsonConvert.SerializeObject(formData);
         Debug.Log($"📤 Sending JSON: {json}");
 
