@@ -10,6 +10,5 @@ public enum MaterialType
     Oil,
     Uranium,
     Food,
-    Water,
-    Tier_3
+    Water
 }

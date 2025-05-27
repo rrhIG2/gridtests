@@ -93,7 +93,7 @@ public class GridSystem : MonoBehaviour
         if (_cachedData.TryGetValue(gridPos, out GridData data))
         {
             script.SetData(data);
-            Debug.Log($"💾 Applied cached data to GridCell [{gridPos.x}, {gridPos.y}] - ID: {data.ownerOfTheGridId}, Owner: {data.ownerOfTheGridNickname}");
+            Debug.Log($"💾 Applied cached data to GridCell [{gridPos.x}, {gridPos.y}] - ID: {data.owner_of_the_grid_id}, Owner: {data.owner_of_the_grid_nickname}");
         }
 
         _activeCells[gridPos] = cell;
@@ -173,7 +173,7 @@ public class GridSystem : MonoBehaviour
 
         Debug.Log($"🔍 Cached Data Count: {_cachedData.Count}");
         foreach (var data in _cachedData)
-            Debug.Log($"[Pos: {data.Key}] -> GridData: ID: {data.Value.id}, Owner: {data.Value.ownerOfTheGridId}");
+            Debug.Log($"[Pos: {data.Key}] -> GridData: ID: {data.Value.id}, Owner: {data.Value.owner_of_the_grid_id}");
     }
 
     private void LogActiveCells()

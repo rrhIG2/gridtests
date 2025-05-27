@@ -71,7 +71,6 @@ public class GridInfoUI : MonoBehaviour
         startProductionUranium.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Uranium));
         startProductionFood.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Food));
         startProductionWater.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Water));
-        tier_3.onClick.AddListener(() => OnStartProductionButtonClick(MaterialType.Tier_3));
 
     }
 
@@ -87,7 +86,7 @@ public class GridInfoUI : MonoBehaviour
         GridCoordinates.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
         potentialValueOfWood.text = $"Wood: {gridCell.MaterialPotentialWood}";
         potentialValueOfStone.text = $"Stone: {gridCell.MaterialPotentialStone}";
-        potentialValueOfIron.text = $"Iron: {gridCell.MaterialPotentialIron}";
+        potentialValueOfIron.text = $"Iron: {gridCell.MaterialPotentialIron}"; 
         potentialValueOfGold.text = $"Gold: {gridCell.MaterialPotentialGold}";
         potentialValueOfCopper.text = $"Copper: {gridCell.MaterialPotentialCopper}";
         potentialValueOfCoal.text = $"Coal: {gridCell.MaterialPotentialCoal}";
@@ -95,6 +94,7 @@ public class GridInfoUI : MonoBehaviour
         potentialValueOfUranium.text = $"Uranium: {gridCell.MaterialPotentialUranium}";
         potentialValueOfFood.text = $"Food: {gridCell.MaterialPotentialFood}";
         potentialValueOfWater.text = $"Water: {gridCell.MaterialPotentialWater}";
+
 
         current_X = gridCell.X;
         current_Y = gridCell.Y;
@@ -125,8 +125,7 @@ public class GridInfoUI : MonoBehaviour
 
     Debug.Log($"🏭 Starting production on Grid Coordinates: X={xCoordinate}, Y={yCoordinate} for Material: {material}");
 
-    // 🚀 Call the backend to start production
-    double miningRate = (material == MaterialType.Tier_3) ? 0 : 10;
+
 
    // StartCoroutine(databaseManager.SendStartProductionRequest(xCoordinate, yCoordinate, playerId, material, miningRate));
 }
