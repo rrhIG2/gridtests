@@ -145,7 +145,23 @@ public class GridCell : MonoBehaviour
         MaterialIronIsMined = data.material_iron_is_mined;
         MaterialIronMiningValue = data.material_iron_mining_value;
 
-        SetColor(PlayerPrefs.GetInt("UserId", -1) == _idOfOwner ? Color.green : new Color(1f, 0.65f, 0f));
+        //SetColor(PlayerPrefs.GetInt("UserId", -1) == _idOfOwner ? Color.green : new Color(1f, 0.65f, 0f));
+
+        int myId = PlayerPrefs.GetInt("UserId", -1);
+
+        if (_idOfOwner <= 0)
+        {
+            SetColor(Color.yellow); // No owner
+        }
+        else if (_idOfOwner == myId)
+        {
+            SetColor(Color.green); // You are the owner
+        }
+        else
+        {
+            SetColor(Color.red); // Someone else owns it
+        }
+
     }
 
 

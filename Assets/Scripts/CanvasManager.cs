@@ -8,6 +8,7 @@ public class CanvasManager : MonoBehaviour
     [Header("UI Canvases")]
     [SerializeField] private Canvas _Tier1Canvas;
     [SerializeField] private Canvas _Tier1PotencialMaterialCanvas;
+    [SerializeField] private Canvas _Tier2MaterialsCanvas;
 
     [Header("Tier 1 Canvas")]
     [SerializeField] private TextMeshProUGUI _tier1CoordinatesText;
@@ -52,6 +53,19 @@ public class CanvasManager : MonoBehaviour
 
     [SerializeField] private Button _hidePotentialMaterialButton;
 
+    [Header("Tier 2 Materials Canvas")]
+    [SerializeField] private TextMeshProUGUI _tier2CoordinatesText;
+    [SerializeField] private TextMeshProUGUI _tier2WoodText;
+    [SerializeField] private TextMeshProUGUI _tier2StoneText;
+    [SerializeField] private TextMeshProUGUI _tier2IronText;
+    [SerializeField] private TextMeshProUGUI _tier2GoldText;
+    [SerializeField] private TextMeshProUGUI _tier2CopperText;
+    [SerializeField] private TextMeshProUGUI _tier2CoalText;
+    [SerializeField] private TextMeshProUGUI _tier2OilText;
+    [SerializeField] private TextMeshProUGUI _tier2UraniumText;
+    [SerializeField] private TextMeshProUGUI _tier2FoodText;
+    [SerializeField] private TextMeshProUGUI _tier2WaterText;
+    [SerializeField] private Button _tier2HideButton;
 
     private GridCell currentGridCell;
 
@@ -65,10 +79,8 @@ public class CanvasManager : MonoBehaviour
         // Initialize the canvases
         _Tier1Canvas.enabled = false;
         _Tier1PotencialMaterialCanvas.enabled = false;
-        /*
-                // Set up button listeners
-                _tier1PotencionalMaterialButton.onClick.AddListener(() => ShowPotentialMaterialCanvas());
-                _tier1BuyLand.onClick.AddListener(() => BuyLand());*/
+        _Tier2MaterialsCanvas.enabled = false;
+        
     }
 
     /// <summary>
@@ -76,19 +88,29 @@ public class CanvasManager : MonoBehaviour
     /// </summary>
     public void Show(GridCell gridCell)
     {
+
         currentGridCell = gridCell;
+
+        int currentUserId = PlayerPrefs.GetInt("UserId", -1);
+        int gridOwnerId = currentGridCell.GerGridOwnerId();
+        bool isOwner = currentUserId == gridOwnerId;
+        bool hasNoOwner = gridOwnerId == 0;
+
+        _tier1OwnerText.text = currentGridCell._ownerNickname;
+
 
         // Populate UI elements with values from GridCell
         _Tier1Canvas.enabled = true;
         _Tier1PotencialMaterialCanvas.enabled = false;
         _tier1CoordinatesText.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
-        _tier1OwnerText.text = $"Owner: {gridCell._ownerNickname}";
-        //_tier1PotencionalMaterialButton.onClick.RemoveAllListeners(); // remove this 
+        Debug.Log($"Current User ID: {currentUserId}, Grid Owner ID: {gridOwnerId}, Can Buy: {hasNoOwner && !isOwner}");        //_tier1PotencionalMaterialButton.onClick.RemoveAllListeners(); // remove this 
         _tier1PotencionalMaterialButton.onClick.AddListener(() => ShowPotentialMaterialCanvas());
-        //_hideTier1CanvasButton.onClick.RemoveAllListeners();
         _hideTier1CanvasButton.onClick.AddListener(() => HideTier1Canvas());
-        //_tier1BuyLandButton.onClick.RemoveAllListeners();
         _tier1BuyLandButton.onClick.AddListener(() => OnBuyLandButtonClicked());
+        _tier2MaterialsButton.onClick.RemoveAllListeners();
+        _tier2MaterialsButton.onClick.AddListener(() => ShowTier2MaterialsCanvas());
+        _tier2HideButton.onClick.RemoveAllListeners();
+        _tier2HideButton.onClick.AddListener(() => HideTier2MaterialsCanvas());
 
 
         GridCoordinates.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
@@ -102,13 +124,11 @@ public class CanvasManager : MonoBehaviour
         potentialValueOfUranium.text = $"Uranium: {gridCell.MaterialPotentialUranium}";
         potentialValueOfFood.text = $"Food: {gridCell.MaterialPotentialFood}";
         potentialValueOfWater.text = $"Water: {gridCell.MaterialPotentialWater}";
-        //_hidePotentialMaterialButton.onClick.RemoveAllListeners();
         _hidePotentialMaterialButton.onClick.AddListener(() => HidePotentialMaterialCanvas());
 
         //currentGridCell.DebugPrint();
 
-        int currentUserId = PlayerPrefs.GetInt("UserId", -1);
-        bool isOwner = currentUserId == currentGridCell.GerGridOwnerId();
+        _tier1BuyLandButton.interactable = hasNoOwner && !isOwner;
 
         _tier1BuyLandButton.gameObject.SetActive(!isOwner);
         _tier2MaterialsButton.gameObject.SetActive(isOwner);
@@ -181,34 +201,56 @@ public class CanvasManager : MonoBehaviour
     {
         _Tier1Canvas.enabled = false;
         _Tier1PotencialMaterialCanvas.enabled = true;
+        _Tier2MaterialsCanvas.enabled = false;
     }
 
     private void HidePotentialMaterialCanvas()
     {
         _Tier1Canvas.enabled = true;
         _Tier1PotencialMaterialCanvas.enabled = false;
+        _Tier2MaterialsCanvas.enabled = false;
     }
 
     private void HideTier1Canvas()
     {
         _Tier1Canvas.enabled = false;
         _Tier1PotencialMaterialCanvas.enabled = false;
+        _Tier2MaterialsCanvas.enabled = false;
+    }
+
+    private void ShowTier2MaterialsCanvas()
+    {
+        _Tier1Canvas.enabled = false;
+        _Tier1PotencialMaterialCanvas.enabled = false;
+        _Tier2MaterialsCanvas.enabled = true;
+
+        _tier2CoordinatesText.text = $"X = {currentGridCell.X} : Y = {currentGridCell.Y}";
+        UpdateTier2MaterialTexts(); 
+    }
+
+    private void HideTier2MaterialsCanvas()
+    {
+        _Tier1Canvas.enabled = true;
+        _Tier1PotencialMaterialCanvas.enabled = false;
+        _Tier2MaterialsCanvas.enabled = false;
     }
 
     private void OnBuyLandButtonClicked()
     {
-        if (_buyLandInProgress)
+        if (_buyLandInProgress) return;
+
+        int playerId = PlayerPrefs.GetInt("UserId", -1);
+        int gridId = currentGridCell.GetGridId();
+        int gridOwnerId = currentGridCell.GerGridOwnerId();
+
+        if (playerId < 0 || gridId <= 0 || gridOwnerId != 0)
         {
-            Debug.Log("🛑 BuyLand action already in progress. Ignoring repeated clicks.");
+            Debug.LogWarning("⛔ Cannot buy land: either already owned or invalid data.");
             return;
         }
 
         _buyLandInProgress = true;
-
         Debug.Log("🛒 BuyLand button pressed.");
-
-        int playerId = PlayerPrefs.GetInt("UserId", -1);
-        int gridId = currentGridCell.GetGridId(); // Or however you track it
 
         StartCoroutine(databaseManager.BuyLandRequest(playerId, gridId, (updatedData) =>
         {
@@ -216,15 +258,17 @@ public class CanvasManager : MonoBehaviour
             {
                 currentGridCell.SetData(updatedData);
                 Debug.Log("✅ Land purchase complete.");
+                Show(currentGridCell); 
             }
             else
             {
                 Debug.LogWarning("⚠️ Land purchase failed.");
             }
 
-            _buyLandInProgress = false; // Allow button press again
+            _buyLandInProgress = false;
         }));
     }
+
 
     // Helper function to set button visuals based on mining status
     void SetProductionButton(Button button, bool? isMined)
@@ -271,5 +315,32 @@ public class CanvasManager : MonoBehaviour
         }));
     }
 
+    private void UpdateTier2MaterialTexts()
+    {
+        SetTier2MaterialText(_tier2WoodText, currentGridCell.MaterialWoodIsMined, currentGridCell.MaterialActualWood, currentGridCell.MaterialWoodMiningValue, "Wood");
+        SetTier2MaterialText(_tier2StoneText, currentGridCell.MaterialStoneIsMined, currentGridCell.MaterialActualStone, currentGridCell.MaterialStoneMiningValue, "Stone");
+        SetTier2MaterialText(_tier2IronText, currentGridCell.MaterialIronIsMined, currentGridCell.MaterialActualIron, currentGridCell.MaterialIronMiningValue, "Iron");
+        SetTier2MaterialText(_tier2GoldText, currentGridCell.MaterialGoldIsMined, currentGridCell.MaterialActualGold, currentGridCell.MaterialGoldMiningValue, "Gold");
+        SetTier2MaterialText(_tier2CopperText, currentGridCell.MaterialCopperIsMined, currentGridCell.MaterialActualCopper, currentGridCell.MaterialCopperMiningValue, "Copper");
+        SetTier2MaterialText(_tier2CoalText, currentGridCell.MaterialCoalIsMined, currentGridCell.MaterialActualCoal, currentGridCell.MaterialCoalMiningValue, "Coal");
+        SetTier2MaterialText(_tier2OilText, currentGridCell.MaterialOilIsMined, currentGridCell.MaterialActualOil, currentGridCell.MaterialOilMiningValue, "Oil");
+        SetTier2MaterialText(_tier2UraniumText, currentGridCell.MaterialUraniumIsMined, currentGridCell.MaterialActualUranium, currentGridCell.MaterialUraniumMiningValue, "Uranium");
+        SetTier2MaterialText(_tier2FoodText, currentGridCell.MaterialFoodIsMined, currentGridCell.MaterialActualFood, currentGridCell.MaterialFoodMiningValue, "Food");
+        SetTier2MaterialText(_tier2WaterText, currentGridCell.MaterialWaterIsMined, currentGridCell.MaterialActualWater, currentGridCell.MaterialWaterMiningValue, "Water");
+    }
+
+    private void SetTier2MaterialText(TextMeshProUGUI textField, bool? isMined, float? actualValue, float miningValue, string materialName)
+    {
+        if (isMined == true)
+        {
+            textField.color = Color.white;
+            textField.text = $"{materialName}: {actualValue} (Mining rate: {miningValue} every 10s)";
+        }
+        else
+        {
+            textField.color = Color.red;
+            textField.text = $"We are not mining this material.";
+        }
+    }
 
 }
