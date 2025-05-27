@@ -225,4 +225,56 @@ public class DatabaseManager : MonoBehaviour
             Debug.LogError($"❌ Failed to update material: {request.error}");
         }
     }
+
+    public IEnumerator BuyLandRequest(int userId, int gridId, System.Action<GridData> callback)
+{
+    string url = _serverUrl + "buy_land.php";
+
+    var payload = new
+    {
+        userId = userId,
+        gridId = gridId
+    };
+
+    string json = JsonConvert.SerializeObject(payload);
+    Debug.Log($"📤 Sending BuyLandRequest: {json}");
+
+    UnityWebRequest request = new UnityWebRequest(url, "POST");
+    byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+    request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+    request.downloadHandler = new DownloadHandlerBuffer();
+    request.SetRequestHeader("Content-Type", "application/json");
+
+    yield return request.SendWebRequest();
+
+    if (request.result == UnityWebRequest.Result.Success)
+    {
+        Debug.Log($"📥 Received BuyLand Response: {request.downloadHandler.text}");
+
+        if (request.downloadHandler.text.StartsWith("<"))
+        {
+            Debug.LogError("❌ Received HTML (probably a PHP error)");
+            callback(null);
+            yield break;
+        }
+
+        try
+        {
+            GridData gridData = JsonConvert.DeserializeObject<GridData>(request.downloadHandler.text);
+            callback(gridData);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"❌ Failed to parse response: {ex.Message}");
+            callback(null);
+        }
+    }
+    else
+    {
+        Debug.LogError($"❌ BuyLandRequest failed: {request.error}");
+        callback(null);
+    }
+}
+
+
 }

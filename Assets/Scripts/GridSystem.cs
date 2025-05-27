@@ -19,6 +19,8 @@ public class GridSystem : MonoBehaviour
     private Dictionary<Vector2Int, GameObject> _activeCells = new();
     private Dictionary<Vector2Int, GridData> _cachedData = new();
     private Vector2Int _lastCameraPosition;
+    
+    [SerializeField] private CanvasManager _canvasManager;
 
     private void Start()
     {
@@ -46,6 +48,20 @@ public class GridSystem : MonoBehaviour
             {
                 Debug.Log("🛰 Outside of cache. Fetching more data...");
                 StartCoroutine(FetchAndCacheData());
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                GridCell gridCell = hit.collider.GetComponent<GridCell>();
+                if (gridCell != null)
+                {
+                    Debug.Log($"📌 Clicked on: {gridCell.gameObject.name}");
+                    _canvasManager.Show(gridCell);
+                }
             }
         }
 
