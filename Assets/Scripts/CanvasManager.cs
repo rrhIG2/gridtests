@@ -113,6 +113,65 @@ public class CanvasManager : MonoBehaviour
         _tier1BuyLandButton.gameObject.SetActive(!isOwner);
         _tier2MaterialsButton.gameObject.SetActive(isOwner);
 
+        // Production buttons visibility
+        startProductionWood.gameObject.SetActive(isOwner);
+        startProductionStone.gameObject.SetActive(isOwner);
+        startProductionIron.gameObject.SetActive(isOwner);
+        startProductionGold.gameObject.SetActive(isOwner);
+        startProductionCopper.gameObject.SetActive(isOwner);
+        startProductionCoal.gameObject.SetActive(isOwner);
+        startProductionOil.gameObject.SetActive(isOwner);
+        startProductionUranium.gameObject.SetActive(isOwner);
+        startProductionFood.gameObject.SetActive(isOwner);
+        startProductionWater.gameObject.SetActive(isOwner);
+
+        // Set visuals if player is owner
+        if (isOwner)
+        {
+            SetProductionButton(startProductionWood, currentGridCell.MaterialWoodIsMined);
+            SetProductionButton(startProductionStone, currentGridCell.MaterialStoneIsMined);
+            SetProductionButton(startProductionIron, currentGridCell.MaterialIronIsMined);
+            SetProductionButton(startProductionGold, currentGridCell.MaterialGoldIsMined);
+            SetProductionButton(startProductionCopper, currentGridCell.MaterialCopperIsMined);
+            SetProductionButton(startProductionCoal, currentGridCell.MaterialCoalIsMined);
+            SetProductionButton(startProductionOil, currentGridCell.MaterialOilIsMined);
+            SetProductionButton(startProductionUranium, currentGridCell.MaterialUraniumIsMined);
+            SetProductionButton(startProductionFood, currentGridCell.MaterialFoodIsMined);
+            SetProductionButton(startProductionWater, currentGridCell.MaterialWaterIsMined);
+        }
+
+        // Hook up start production button actions
+        startProductionWood.onClick.RemoveAllListeners();
+        startProductionWood.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Wood));
+
+        startProductionStone.onClick.RemoveAllListeners();
+        startProductionStone.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Stone));
+
+        startProductionIron.onClick.RemoveAllListeners();
+        startProductionIron.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Iron));
+
+        startProductionGold.onClick.RemoveAllListeners();
+        startProductionGold.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Gold));
+
+        startProductionCopper.onClick.RemoveAllListeners();
+        startProductionCopper.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Copper));
+
+        startProductionCoal.onClick.RemoveAllListeners();
+        startProductionCoal.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Coal));
+
+        startProductionOil.onClick.RemoveAllListeners();
+        startProductionOil.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Oil));
+
+        startProductionUranium.onClick.RemoveAllListeners();
+        startProductionUranium.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Uranium));
+
+        startProductionFood.onClick.RemoveAllListeners();
+        startProductionFood.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Food));
+
+        startProductionWater.onClick.RemoveAllListeners();
+        startProductionWater.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Water));
+
+
 
     }
 
@@ -137,35 +196,80 @@ public class CanvasManager : MonoBehaviour
     }
 
     private void OnBuyLandButtonClicked()
-{
-    if (_buyLandInProgress)
     {
-        Debug.Log("🛑 BuyLand action already in progress. Ignoring repeated clicks.");
-        return;
+        if (_buyLandInProgress)
+        {
+            Debug.Log("🛑 BuyLand action already in progress. Ignoring repeated clicks.");
+            return;
+        }
+
+        _buyLandInProgress = true;
+
+        Debug.Log("🛒 BuyLand button pressed.");
+
+        int playerId = PlayerPrefs.GetInt("UserId", -1);
+        int gridId = currentGridCell.GetGridId(); // Or however you track it
+
+        StartCoroutine(databaseManager.BuyLandRequest(playerId, gridId, (updatedData) =>
+        {
+            if (updatedData != null)
+            {
+                currentGridCell.SetData(updatedData);
+                Debug.Log("✅ Land purchase complete.");
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ Land purchase failed.");
+            }
+
+            _buyLandInProgress = false; // Allow button press again
+        }));
     }
 
-    _buyLandInProgress = true;
-
-    Debug.Log("🛒 BuyLand button pressed.");
-    
-    int playerId = PlayerPrefs.GetInt("UserId", -1);
-    int gridId = currentGridCell.GetGridId(); // Or however you track it
-
-    StartCoroutine(databaseManager.BuyLandRequest(playerId, gridId, (updatedData) =>
+    // Helper function to set button visuals based on mining status
+    void SetProductionButton(Button button, bool? isMined)
     {
-        if (updatedData != null)
+        var colors = button.colors;
+        if (isMined == true)
         {
-            currentGridCell.SetData(updatedData);
-            Debug.Log("✅ Land purchase complete.");
+            colors.normalColor = Color.red;
+            button.GetComponentInChildren<TextMeshProUGUI>().text = "Already Producing";
         }
         else
         {
-            Debug.LogWarning("⚠️ Land purchase failed.");
+            colors.normalColor = Color.green;
+            button.GetComponentInChildren<TextMeshProUGUI>().text = "Start Producing";
+        }
+        button.colors = colors;
+    }
+
+    private void OnStartProductionClicked(MaterialType material)
+    {
+        int playerId = PlayerPrefs.GetInt("UserId", -1);
+        int gridId = currentGridCell.GetGridId();
+
+        if (playerId < 0 || gridId <= 0)
+        {
+            Debug.LogError("❌ Invalid player ID or grid ID.");
+            return;
         }
 
-        _buyLandInProgress = false; // Allow button press again
-    }));
-}
+        Debug.Log($"⛏ Sending start production request for {material} on grid {gridId}");
+
+        StartCoroutine(databaseManager.StartProductionRequest(playerId, gridId, material, (updatedData) =>
+        {
+            if (updatedData != null)
+            {
+                currentGridCell.SetData(updatedData);
+                Show(currentGridCell); // Refresh UI
+                Debug.Log($"✅ Production started for {material}.");
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ Failed to start production.");
+            }
+        }));
+    }
 
 
 }

@@ -156,68 +156,6 @@ public class GridCell : MonoBehaviour
         if (_renderer != null) _renderer.material.color = color;
     }
 
-    /*private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                GridCell gridCell = hit.collider.GetComponent<GridCell>();
-                if (gridCell != null && _canvasManager != null)
-                {
-                    Debug.Log($"📌 Click detected on: {gridCell.gameObject.name}");
-                    _canvasManager.Show(gridCell);
-                }
-            }
-        }
-    }*/
-    /*private void Update()
-{
-    if (Input.GetMouseButtonDown(0) && !_clickInProgress)
-    {
-        _clickInProgress = true;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            GridCell gridCell = hit.collider.GetComponent<GridCell>();
-            if (gridCell != null && _canvasManager != null)
-            {
-                Debug.Log($"📌 Click detected on: {gridCell.gameObject.name}");
-                _canvasManager.Show(gridCell);
-            }
-        }
-    }
-
-    // Reset the click flag when mouse button is released
-    if (Input.GetMouseButtonUp(0))
-    {
-        _clickInProgress = false;
-    }
-}*//*
-private void Update()
-{
-    Debug.Log($"Update called from: {gameObject.name}");
-
-    if (Input.GetMouseButtonDown(0))
-    {
-        Debug.Log("MOUSE DOWN DETECTED");
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            GridCell gridCell = hit.collider.GetComponent<GridCell>();
-            if (gridCell != null && _canvasManager != null)
-            {
-                Debug.Log($"📌 Click detected on: {gridCell.gameObject.name}");
-                _canvasManager.Show(gridCell);
-            }
-        }
-    }
-}*/
-
-
     public void DebugPrint()
     {
         Debug.Log($"🟦 GRID CELL [{_x}, {_y}]  |  Owner ID: {_idOfOwner} | Owner Nickname: {_ownerNickname}");

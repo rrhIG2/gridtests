@@ -227,54 +227,89 @@ public class DatabaseManager : MonoBehaviour
     }
 
     public IEnumerator BuyLandRequest(int userId, int gridId, System.Action<GridData> callback)
-{
-    string url = _serverUrl + "buy_land.php";
-
-    var payload = new
     {
-        userId = userId,
-        gridId = gridId
-    };
+        string url = _serverUrl + "buy_land.php";
 
-    string json = JsonConvert.SerializeObject(payload);
-    Debug.Log($"📤 Sending BuyLandRequest: {json}");
-
-    UnityWebRequest request = new UnityWebRequest(url, "POST");
-    byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-    request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-    request.downloadHandler = new DownloadHandlerBuffer();
-    request.SetRequestHeader("Content-Type", "application/json");
-
-    yield return request.SendWebRequest();
-
-    if (request.result == UnityWebRequest.Result.Success)
-    {
-        Debug.Log($"📥 Received BuyLand Response: {request.downloadHandler.text}");
-
-        if (request.downloadHandler.text.StartsWith("<"))
+        var payload = new
         {
-            Debug.LogError("❌ Received HTML (probably a PHP error)");
-            callback(null);
-            yield break;
+            userId = userId,
+            gridId = gridId
+        };
+
+        string json = JsonConvert.SerializeObject(payload);
+        Debug.Log($"📤 Sending BuyLandRequest: {json}");
+
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log($"📥 Received BuyLand Response: {request.downloadHandler.text}");
+
+            if (request.downloadHandler.text.StartsWith("<"))
+            {
+                Debug.LogError("❌ Received HTML (probably a PHP error)");
+                callback(null);
+                yield break;
+            }
+
+            try
+            {
+                GridData gridData = JsonConvert.DeserializeObject<GridData>(request.downloadHandler.text);
+                callback(gridData);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"❌ Failed to parse response: {ex.Message}");
+                callback(null);
+            }
         }
-
-        try
+        else
         {
-            GridData gridData = JsonConvert.DeserializeObject<GridData>(request.downloadHandler.text);
-            callback(gridData);
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"❌ Failed to parse response: {ex.Message}");
+            Debug.LogError($"❌ BuyLandRequest failed: {request.error}");
             callback(null);
         }
     }
-    else
+
+    // Add this to DatabaseManager.cs
+    public IEnumerator StartProductionRequest(int userId, int gridId, MaterialType material, System.Action<GridData> callback)
     {
-        Debug.LogError($"❌ BuyLandRequest failed: {request.error}");
-        callback(null);
+        string url = _serverUrl + "startProduction.php";
+
+        var payload = new
+        {
+            userId = userId,
+            gridId = gridId,
+            material = material.ToString().ToLower() // match PHP expectation (e.g., "wood")
+        };
+
+        string json = JsonConvert.SerializeObject(payload);
+        using UnityWebRequest request = new UnityWebRequest(url, "POST")
+        {
+            uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json)),
+            downloadHandler = new DownloadHandlerBuffer()
+        };
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError($"❌ Error starting production: {request.error}");
+            callback(null);
+        }
+        else
+        {
+            GridData updatedData = JsonConvert.DeserializeObject<GridData>(request.downloadHandler.text);
+            callback(updatedData);
+        }
     }
-}
+
 
 
 }
