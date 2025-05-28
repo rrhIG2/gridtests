@@ -6,67 +6,90 @@ using System;
 public class CanvasManager : MonoBehaviour
 {
     [Header("UI Canvases")]
-    [SerializeField] private Canvas _Tier1Canvas;
-    [SerializeField] private Canvas _Tier1PotencialMaterialCanvas;
-    [SerializeField] private Canvas _Tier2MaterialsCanvas;
+    [SerializeField] private Canvas _tier1Header_Canvas;
+    [SerializeField] private Canvas _tier1_Canvas;
+    [SerializeField] private Canvas _tier1_PotentialMaterial_Canvas;
+    [SerializeField] private Canvas _tier2_MaterialsGridProduction_Canvas;
+    [SerializeField] private Canvas _tier1_MaterialsUserProduction_Canvas;
 
-    [Header("Tier 1 Canvas")]
-    [SerializeField] private TextMeshProUGUI _tier1CoordinatesText;
-    [SerializeField] private TextMeshProUGUI _tier1OwnerText;
-    [SerializeField] private Button _tier1PotencionalMaterialButton;
-    [SerializeField] private Button _tier1BuyLandButton;
-    [SerializeField] private Button _hideTier1CanvasButton;
-    [SerializeField] private Button _tier2MaterialsButton;
+    [Header("Tier1 Header Canvas")]
+    [SerializeField] private TextMeshProUGUI _tier1Header_UserNickname_Text;
+    [SerializeField] private Button _tier1Header_ShowMaterials_Button;
+
+    [Header("Tier1 Canvas")]
+    [SerializeField] private TextMeshProUGUI _tier1_Coordinates_Text;
+    [SerializeField] private TextMeshProUGUI _tier1_OwnerOfTheGrid_Text;
+    [SerializeField] private Button _tier1_ShowPotencionalMaterial_Button;
+    [SerializeField] private Button _tier1_BuyLand_Button;
+    [SerializeField] private Button _tier2_ShowMaterialsProducing_Button;
+    [SerializeField] private Button _tier1_HideCanvas_Button;
+
 
     [Header("Tier 1 Potential Material Canvas")]
-    [SerializeField] private TextMeshProUGUI GridCoordinates;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_GridCoordinates_Text;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfWood;
-    [SerializeField] private Button startProductionWood;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Wood_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Wood_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfStone;
-    [SerializeField] private Button startProductionStone;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Stone_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Stone_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfIron;
-    [SerializeField] private Button startProductionIron;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Iron_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Iron_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfGold;
-    [SerializeField] private Button startProductionGold;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Gold_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Gold_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfCopper;
-    [SerializeField] private Button startProductionCopper;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Copper_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Copper_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfCoal;
-    [SerializeField] private Button startProductionCoal;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Coal_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Coal_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfOil;
-    [SerializeField] private Button startProductionOil;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Oil_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Oil_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfUranium;
-    [SerializeField] private Button startProductionUranium;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Uranium_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Uranium_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfFood;
-    [SerializeField] private Button startProductionFood;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Food_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Food_Button;
 
-    [SerializeField] private TextMeshProUGUI potentialValueOfWater;
-    [SerializeField] private Button startProductionWater;
+    [SerializeField] private TextMeshProUGUI _tier1PotentialMaterial_Water_Text;
+    [SerializeField] private Button _tier1PotentialMateria_Water_Button;
 
-    [SerializeField] private Button _hidePotentialMaterialButton;
+    [SerializeField] private Button _tier1_PotentialMaterialHide_Button;
 
-    [Header("Tier 2 Materials Canvas")]
-    [SerializeField] private TextMeshProUGUI _tier2CoordinatesText;
-    [SerializeField] private TextMeshProUGUI _tier2WoodText;
-    [SerializeField] private TextMeshProUGUI _tier2StoneText;
-    [SerializeField] private TextMeshProUGUI _tier2IronText;
-    [SerializeField] private TextMeshProUGUI _tier2GoldText;
-    [SerializeField] private TextMeshProUGUI _tier2CopperText;
-    [SerializeField] private TextMeshProUGUI _tier2CoalText;
-    [SerializeField] private TextMeshProUGUI _tier2OilText;
-    [SerializeField] private TextMeshProUGUI _tier2UraniumText;
-    [SerializeField] private TextMeshProUGUI _tier2FoodText;
-    [SerializeField] private TextMeshProUGUI _tier2WaterText;
-    [SerializeField] private Button _tier2HideButton;
+    [Header("Tier 2 Materials Grid Production Canvas")]
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Coordinates_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Wood_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Stone_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Iron_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Gold_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Copper_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Coal_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Oil_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Uranium_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Food_Text;
+    [SerializeField] private TextMeshProUGUI _tier2MaterialsGridProduction_Water_Text;
+    [SerializeField] private Button _tier2_MaterialsGridProductionHide_Button;
 
+
+
+    [Header("Tier.1 Materials User Production Canvas")]
+
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Coordinates_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Wood_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Stone_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Iron_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Gold_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Copper_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Coal_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Oil_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Uranium_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Food_Text;
+    [SerializeField] private TextMeshProUGUI _tier1MaterialsUserProduction_Water_Text;
+    [SerializeField] private Button _tier1_MaterialsUserProductionHide_Button;
     private GridCell currentGridCell;
 
     [SerializeField] private DatabaseManager databaseManager;
@@ -76,11 +99,13 @@ public class CanvasManager : MonoBehaviour
 
     private void Awake()
     {
-        // Initialize the canvases
-        _Tier1Canvas.enabled = false;
-        _Tier1PotencialMaterialCanvas.enabled = false;
-        _Tier2MaterialsCanvas.enabled = false;
-        
+        HideAllCanvases();
+        _tier1Header_Canvas.enabled = true;
+
+        _tier1Header_UserNickname_Text.text = PlayerPrefs.GetString("Nickname");
+        _tier1Header_ShowMaterials_Button.onClick.AddListener(() => ShowTier1UIMaterials());
+        _tier1_MaterialsUserProductionHide_Button.onClick.AddListener(() => HideTier1UIMaterials());
+
     }
 
     /// <summary>
@@ -96,100 +121,100 @@ public class CanvasManager : MonoBehaviour
         bool isOwner = currentUserId == gridOwnerId;
         bool hasNoOwner = gridOwnerId == 0;
 
-        _tier1OwnerText.text = currentGridCell._ownerNickname;
+
 
 
         // Populate UI elements with values from GridCell
-        _Tier1Canvas.enabled = true;
-        _Tier1PotencialMaterialCanvas.enabled = false;
-        _tier1CoordinatesText.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
-        Debug.Log($"Current User ID: {currentUserId}, Grid Owner ID: {gridOwnerId}, Can Buy: {hasNoOwner && !isOwner}");        //_tier1PotencionalMaterialButton.onClick.RemoveAllListeners(); // remove this 
-        _tier1PotencionalMaterialButton.onClick.AddListener(() => ShowPotentialMaterialCanvas());
-        _hideTier1CanvasButton.onClick.AddListener(() => HideTier1Canvas());
-        _tier1BuyLandButton.onClick.AddListener(() => OnBuyLandButtonClicked());
-        _tier2MaterialsButton.onClick.RemoveAllListeners();
-        _tier2MaterialsButton.onClick.AddListener(() => ShowTier2MaterialsCanvas());
-        _tier2HideButton.onClick.RemoveAllListeners();
-        _tier2HideButton.onClick.AddListener(() => HideTier2MaterialsCanvas());
+        HideAllCanvases();
+        _tier1_Canvas.enabled = true;
+
+        _tier1_Coordinates_Text.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
+
+        //Debug.Log($"Current User ID: {currentUserId}, Grid Owner ID: {gridOwnerId}, Can Buy: {hasNoOwner && !isOwner}");
+
+        _tier1_ShowPotencionalMaterial_Button.onClick.AddListener(() => ShowPotentialMaterialCanvas());
+        _tier1_HideCanvas_Button.onClick.AddListener(() => HideTier1Canvas());
+        _tier1_BuyLand_Button.onClick.AddListener(() => OnBuyLandButtonClicked());
+        _tier2_ShowMaterialsProducing_Button.onClick.AddListener(() => ShowTier2MaterialsCanvas());
+
+        _tier2_MaterialsGridProductionHide_Button.onClick.AddListener(() => HideTier2MaterialsCanvas());////////////////////////////////////////
 
 
-        GridCoordinates.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
-        potentialValueOfWood.text = $"Wood: {gridCell.MaterialPotentialWood}";
-        potentialValueOfStone.text = $"Stone: {gridCell.MaterialPotentialStone}";
-        potentialValueOfIron.text = $"Iron: {gridCell.MaterialPotentialIron}";
-        potentialValueOfGold.text = $"Gold: {gridCell.MaterialPotentialGold}";
-        potentialValueOfCopper.text = $"Copper: {gridCell.MaterialPotentialCopper}";
-        potentialValueOfCoal.text = $"Coal: {gridCell.MaterialPotentialCoal}";
-        potentialValueOfOil.text = $"Oil: {gridCell.MaterialPotentialOil}";
-        potentialValueOfUranium.text = $"Uranium: {gridCell.MaterialPotentialUranium}";
-        potentialValueOfFood.text = $"Food: {gridCell.MaterialPotentialFood}";
-        potentialValueOfWater.text = $"Water: {gridCell.MaterialPotentialWater}";
-        _hidePotentialMaterialButton.onClick.AddListener(() => HidePotentialMaterialCanvas());
+        _tier1PotentialMaterial_GridCoordinates_Text.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
+        _tier1PotentialMaterial_Wood_Text.text = $"Wood: {gridCell.MaterialPotentialWood}";
+        _tier1PotentialMaterial_Stone_Text.text = $"Stone: {gridCell.MaterialPotentialStone}";
+        _tier1PotentialMaterial_Iron_Text.text = $"Iron: {gridCell.MaterialPotentialIron}";
+        _tier1PotentialMaterial_Gold_Text.text = $"Gold: {gridCell.MaterialPotentialGold}";
+        _tier1PotentialMaterial_Copper_Text.text = $"Copper: {gridCell.MaterialPotentialCopper}";
+        _tier1PotentialMaterial_Coal_Text.text = $"Coal: {gridCell.MaterialPotentialCoal}";
+        _tier1PotentialMaterial_Oil_Text.text = $"Oil: {gridCell.MaterialPotentialOil}";
+        _tier1PotentialMaterial_Uranium_Text.text = $"Uranium: {gridCell.MaterialPotentialUranium}";
+        _tier1PotentialMaterial_Food_Text.text = $"Food: {gridCell.MaterialPotentialFood}";
+        _tier1PotentialMaterial_Water_Text.text = $"Water: {gridCell.MaterialPotentialWater}";
+        _tier1_PotentialMaterialHide_Button.onClick.AddListener(() => HidePotentialMaterialCanvas());
 
         //currentGridCell.DebugPrint();
 
-        _tier1BuyLandButton.interactable = hasNoOwner && !isOwner;
+        _tier1_BuyLand_Button.interactable = hasNoOwner && !isOwner;
 
-        _tier1BuyLandButton.gameObject.SetActive(!isOwner);
-        _tier2MaterialsButton.gameObject.SetActive(isOwner);
+        _tier2_ShowMaterialsProducing_Button.gameObject.SetActive(isOwner);
 
         // Production buttons visibility
-        startProductionWood.gameObject.SetActive(isOwner);
-        startProductionStone.gameObject.SetActive(isOwner);
-        startProductionIron.gameObject.SetActive(isOwner);
-        startProductionGold.gameObject.SetActive(isOwner);
-        startProductionCopper.gameObject.SetActive(isOwner);
-        startProductionCoal.gameObject.SetActive(isOwner);
-        startProductionOil.gameObject.SetActive(isOwner);
-        startProductionUranium.gameObject.SetActive(isOwner);
-        startProductionFood.gameObject.SetActive(isOwner);
-        startProductionWater.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Wood_Button.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Stone_Button.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Iron_Button.gameObject.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Gold_Button.gameObject.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Copper_Button.gameObject.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Coal_Button.gameObject.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Oil_Button.gameObject.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Uranium_Button.gameObject.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Food_Button.gameObject.gameObject.SetActive(isOwner);
+        _tier1PotentialMateria_Water_Button.gameObject.gameObject.SetActive(isOwner);
 
         // Set visuals if player is owner
         if (isOwner)
         {
-            SetProductionButton(startProductionWood, currentGridCell.MaterialWoodIsMined);
-            SetProductionButton(startProductionStone, currentGridCell.MaterialStoneIsMined);
-            SetProductionButton(startProductionIron, currentGridCell.MaterialIronIsMined);
-            SetProductionButton(startProductionGold, currentGridCell.MaterialGoldIsMined);
-            SetProductionButton(startProductionCopper, currentGridCell.MaterialCopperIsMined);
-            SetProductionButton(startProductionCoal, currentGridCell.MaterialCoalIsMined);
-            SetProductionButton(startProductionOil, currentGridCell.MaterialOilIsMined);
-            SetProductionButton(startProductionUranium, currentGridCell.MaterialUraniumIsMined);
-            SetProductionButton(startProductionFood, currentGridCell.MaterialFoodIsMined);
-            SetProductionButton(startProductionWater, currentGridCell.MaterialWaterIsMined);
+            SetProductionButton(_tier1PotentialMateria_Wood_Button, currentGridCell.MaterialWoodIsMined);
+            SetProductionButton(_tier1PotentialMateria_Stone_Button, currentGridCell.MaterialStoneIsMined);
+            SetProductionButton(_tier1PotentialMateria_Iron_Button, currentGridCell.MaterialIronIsMined);
+            SetProductionButton(_tier1PotentialMateria_Gold_Button, currentGridCell.MaterialGoldIsMined);
+            SetProductionButton(_tier1PotentialMateria_Copper_Button, currentGridCell.MaterialCopperIsMined);
+            SetProductionButton(_tier1PotentialMateria_Coal_Button, currentGridCell.MaterialCoalIsMined);
+            SetProductionButton(_tier1PotentialMateria_Oil_Button, currentGridCell.MaterialOilIsMined);
+            SetProductionButton(_tier1PotentialMateria_Uranium_Button, currentGridCell.MaterialUraniumIsMined);
+            SetProductionButton(_tier1PotentialMateria_Food_Button, currentGridCell.MaterialFoodIsMined);
+            SetProductionButton(_tier1PotentialMateria_Water_Button, currentGridCell.MaterialWaterIsMined);
         }
 
         // Hook up start production button actions
-        startProductionWood.onClick.RemoveAllListeners();
-        startProductionWood.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Wood));
+        _tier1PotentialMateria_Wood_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Wood));
 
-        startProductionStone.onClick.RemoveAllListeners();
-        startProductionStone.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Stone));
+        _tier1PotentialMateria_Stone_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Stone_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Stone));
 
-        startProductionIron.onClick.RemoveAllListeners();
-        startProductionIron.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Iron));
+        _tier1PotentialMateria_Iron_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Iron_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Iron));
 
-        startProductionGold.onClick.RemoveAllListeners();
-        startProductionGold.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Gold));
+        _tier1PotentialMateria_Gold_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Gold_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Gold));
 
-        startProductionCopper.onClick.RemoveAllListeners();
-        startProductionCopper.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Copper));
+        _tier1PotentialMateria_Copper_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Copper_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Copper));
 
-        startProductionCoal.onClick.RemoveAllListeners();
-        startProductionCoal.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Coal));
+        _tier1PotentialMateria_Coal_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Coal_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Coal));
 
-        startProductionOil.onClick.RemoveAllListeners();
-        startProductionOil.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Oil));
+        _tier1PotentialMateria_Oil_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Oil_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Oil));
 
-        startProductionUranium.onClick.RemoveAllListeners();
-        startProductionUranium.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Uranium));
+        _tier1PotentialMateria_Uranium_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Uranium_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Uranium));
 
-        startProductionFood.onClick.RemoveAllListeners();
-        startProductionFood.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Food));
+        _tier1PotentialMateria_Food_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Food_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Food));
 
-        startProductionWater.onClick.RemoveAllListeners();
-        startProductionWater.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Water));
+        _tier1PotentialMateria_Water_Button.onClick.RemoveAllListeners();
+        _tier1PotentialMateria_Water_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Water));
 
 
 
@@ -199,40 +224,34 @@ public class CanvasManager : MonoBehaviour
 
     private void ShowPotentialMaterialCanvas()
     {
-        _Tier1Canvas.enabled = false;
-        _Tier1PotencialMaterialCanvas.enabled = true;
-        _Tier2MaterialsCanvas.enabled = false;
+        HideAllCanvases();
+        _tier1_PotentialMaterial_Canvas.enabled = true;
     }
 
     private void HidePotentialMaterialCanvas()
     {
-        _Tier1Canvas.enabled = true;
-        _Tier1PotencialMaterialCanvas.enabled = false;
-        _Tier2MaterialsCanvas.enabled = false;
+        HideAllCanvases();
+        _tier1_Canvas.enabled = true;
     }
 
     private void HideTier1Canvas()
     {
-        _Tier1Canvas.enabled = false;
-        _Tier1PotencialMaterialCanvas.enabled = false;
-        _Tier2MaterialsCanvas.enabled = false;
+        HideAllCanvases();
+        _tier1Header_Canvas.enabled = true;
     }
 
     private void ShowTier2MaterialsCanvas()
     {
-        _Tier1Canvas.enabled = false;
-        _Tier1PotencialMaterialCanvas.enabled = false;
-        _Tier2MaterialsCanvas.enabled = true;
-
-        _tier2CoordinatesText.text = $"X = {currentGridCell.X} : Y = {currentGridCell.Y}";
-        UpdateTier2MaterialTexts(); 
+        HideAllCanvases();
+        _tier2_MaterialsGridProduction_Canvas.enabled = true;
+        _tier2MaterialsGridProduction_Coordinates_Text.text = $"X = {currentGridCell.X} : Y = {currentGridCell.Y}";
+        UpdateTier2MaterialTexts();
     }
 
     private void HideTier2MaterialsCanvas()
     {
-        _Tier1Canvas.enabled = true;
-        _Tier1PotencialMaterialCanvas.enabled = false;
-        _Tier2MaterialsCanvas.enabled = false;
+        HideAllCanvases();
+        _tier1_Canvas.enabled = true;
     }
 
     private void OnBuyLandButtonClicked()
@@ -258,7 +277,7 @@ public class CanvasManager : MonoBehaviour
             {
                 currentGridCell.SetData(updatedData);
                 Debug.Log("✅ Land purchase complete.");
-                Show(currentGridCell); 
+                Show(currentGridCell);
             }
             else
             {
@@ -317,16 +336,16 @@ public class CanvasManager : MonoBehaviour
 
     private void UpdateTier2MaterialTexts()
     {
-        SetTier2MaterialText(_tier2WoodText, currentGridCell.MaterialWoodIsMined, currentGridCell.MaterialActualWood, currentGridCell.MaterialWoodMiningValue, "Wood");
-        SetTier2MaterialText(_tier2StoneText, currentGridCell.MaterialStoneIsMined, currentGridCell.MaterialActualStone, currentGridCell.MaterialStoneMiningValue, "Stone");
-        SetTier2MaterialText(_tier2IronText, currentGridCell.MaterialIronIsMined, currentGridCell.MaterialActualIron, currentGridCell.MaterialIronMiningValue, "Iron");
-        SetTier2MaterialText(_tier2GoldText, currentGridCell.MaterialGoldIsMined, currentGridCell.MaterialActualGold, currentGridCell.MaterialGoldMiningValue, "Gold");
-        SetTier2MaterialText(_tier2CopperText, currentGridCell.MaterialCopperIsMined, currentGridCell.MaterialActualCopper, currentGridCell.MaterialCopperMiningValue, "Copper");
-        SetTier2MaterialText(_tier2CoalText, currentGridCell.MaterialCoalIsMined, currentGridCell.MaterialActualCoal, currentGridCell.MaterialCoalMiningValue, "Coal");
-        SetTier2MaterialText(_tier2OilText, currentGridCell.MaterialOilIsMined, currentGridCell.MaterialActualOil, currentGridCell.MaterialOilMiningValue, "Oil");
-        SetTier2MaterialText(_tier2UraniumText, currentGridCell.MaterialUraniumIsMined, currentGridCell.MaterialActualUranium, currentGridCell.MaterialUraniumMiningValue, "Uranium");
-        SetTier2MaterialText(_tier2FoodText, currentGridCell.MaterialFoodIsMined, currentGridCell.MaterialActualFood, currentGridCell.MaterialFoodMiningValue, "Food");
-        SetTier2MaterialText(_tier2WaterText, currentGridCell.MaterialWaterIsMined, currentGridCell.MaterialActualWater, currentGridCell.MaterialWaterMiningValue, "Water");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Wood_Text, currentGridCell.MaterialWoodIsMined, currentGridCell.MaterialActualWood, currentGridCell.MaterialWoodMiningValue, "Wood");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Stone_Text, currentGridCell.MaterialStoneIsMined, currentGridCell.MaterialActualStone, currentGridCell.MaterialStoneMiningValue, "Stone");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Iron_Text, currentGridCell.MaterialIronIsMined, currentGridCell.MaterialActualIron, currentGridCell.MaterialIronMiningValue, "Iron");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Gold_Text, currentGridCell.MaterialGoldIsMined, currentGridCell.MaterialActualGold, currentGridCell.MaterialGoldMiningValue, "Gold");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Copper_Text, currentGridCell.MaterialCopperIsMined, currentGridCell.MaterialActualCopper, currentGridCell.MaterialCopperMiningValue, "Copper");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Coal_Text, currentGridCell.MaterialCoalIsMined, currentGridCell.MaterialActualCoal, currentGridCell.MaterialCoalMiningValue, "Coal");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Oil_Text, currentGridCell.MaterialOilIsMined, currentGridCell.MaterialActualOil, currentGridCell.MaterialOilMiningValue, "Oil");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Uranium_Text, currentGridCell.MaterialUraniumIsMined, currentGridCell.MaterialActualUranium, currentGridCell.MaterialUraniumMiningValue, "Uranium");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Food_Text, currentGridCell.MaterialFoodIsMined, currentGridCell.MaterialActualFood, currentGridCell.MaterialFoodMiningValue, "Food");
+        SetTier2MaterialText(_tier2MaterialsGridProduction_Water_Text, currentGridCell.MaterialWaterIsMined, currentGridCell.MaterialActualWater, currentGridCell.MaterialWaterMiningValue, "Water");
     }
 
     private void SetTier2MaterialText(TextMeshProUGUI textField, bool? isMined, float? actualValue, float miningValue, string materialName)
@@ -343,4 +362,40 @@ public class CanvasManager : MonoBehaviour
         }
     }
 
+
+    private void HideTier1UIMaterials()
+    {
+        HideAllCanvases();
+        _tier1Header_Canvas.enabled = true;
+    }
+
+    private void ShowTier1UIMaterials()
+    {
+        Debug.Log("Showing Tier 1 Materials UI");
+        HideAllCanvases();
+        _tier1_MaterialsUserProduction_Canvas.enabled = true;
+
+        _tier1MaterialsUserProduction_Coordinates_Text.text = PlayerPrefs.GetString("Nickname");
+        _tier1MaterialsUserProduction_Wood_Text.text = $"Wood: {currentGridCell.MaterialActualWood}";
+        _tier1MaterialsUserProduction_Stone_Text.text = $"Stone: {currentGridCell.MaterialActualStone}";
+        _tier1MaterialsUserProduction_Iron_Text.text = $"Iron: {currentGridCell.MaterialActualIron}";
+        _tier1MaterialsUserProduction_Gold_Text.text = $"Gold: {currentGridCell.MaterialActualGold}";
+        _tier1MaterialsUserProduction_Copper_Text.text = $"Copper: {currentGridCell.MaterialActualCopper}";
+        _tier1MaterialsUserProduction_Coal_Text.text = $"Coal: {currentGridCell.MaterialActualCoal}";
+        _tier1MaterialsUserProduction_Oil_Text.text = $"Oil: {currentGridCell.MaterialActualOil}";
+        _tier1MaterialsUserProduction_Uranium_Text.text = $"Uranium: {currentGridCell.MaterialActualUranium}";
+        _tier1MaterialsUserProduction_Food_Text.text = $"Food: {currentGridCell.MaterialActualFood}";
+        _tier1MaterialsUserProduction_Water_Text.text = $"Water: {currentGridCell.MaterialActualWater}";
+
+    }
+
+    private void HideAllCanvases()
+    {
+        Debug.Log("Hiding all canvases");
+        _tier1_Canvas.enabled = false;
+        _tier1_PotentialMaterial_Canvas.enabled = false;
+        _tier2_MaterialsGridProduction_Canvas.enabled = false;
+        _tier1Header_Canvas.enabled = false;
+        _tier1_MaterialsUserProduction_Canvas.enabled = false;
+    }
 }
