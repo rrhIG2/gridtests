@@ -19,7 +19,7 @@ public class GridSystem : MonoBehaviour
     private Dictionary<Vector2Int, GameObject> _activeCells = new();
     private Dictionary<Vector2Int, GridData> _cachedData = new();
     private Vector2Int _lastCameraPosition;
-    
+
     [SerializeField] private CanvasManager _canvasManager;
 
     private void Start()
@@ -201,10 +201,38 @@ public class GridSystem : MonoBehaviour
             GridCell script = pair.Value.GetComponent<GridCell>();
             if (script != null)
             {
-               // Debug.Log($"📌 Grid Position: {pair.Key} | Production: {script.productionType} | Rate: {script.materialMining} | Wood: {script.MaterialActualWood}");
+                // Debug.Log($"📌 Grid Position: {pair.Key} | Production: {script.productionType} | Rate: {script.materialMining} | Wood: {script.MaterialActualWood}");
             }
         }
     }
+    
+    public void RefreshVisibleGrids()
+{
+    List<Vector2Int> positions = new(_activeCells.Keys);
+    StartCoroutine(_databaseManager.FetchGridData(positions, (gridList) =>
+    {
+        if (gridList == null)
+        {
+            Debug.LogError("❌ Failed to refresh grid data.");
+            return;
+        }
+
+        foreach (var data in gridList)
+        {
+            Vector2Int pos = new(data.grid_x, data.grid_y);
+            _cachedData[pos] = data;
+
+            if (_activeCells.TryGetValue(pos, out GameObject obj))
+            {
+                GridCell script = obj.GetComponent<GridCell>();
+                script.SetData(data);
+            }
+        }
+
+        Debug.Log("✅ Grid data refreshed.");
+    }));
+}
+
 
     
 }

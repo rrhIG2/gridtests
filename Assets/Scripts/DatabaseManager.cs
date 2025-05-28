@@ -310,6 +310,50 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
+    public IEnumerator TriggerAutoMining(System.Action<bool> callback)
+    {
+        string url = _serverUrl + "auto_mine_all.php";
+
+        using UnityWebRequest request = UnityWebRequest.Get(url);
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("❌ Auto-mining failed: " + request.error);
+            callback(false);
+        }
+        else
+        {
+            Debug.Log("✅ Auto-mining successful.");
+            callback(true);
+        }
+    }
+
+public IEnumerator FetchUserStorage(int userId, System.Action<StorageData> callback)
+{
+    string url = _serverUrl + "get_storage.php";
+    WWWForm form = new();
+    form.AddField("userId", userId);
+
+    using UnityWebRequest request = UnityWebRequest.Post(url, form);
+    yield return request.SendWebRequest();
+
+    if (request.result != UnityWebRequest.Result.Success)
+    {
+        Debug.LogError("❌ Storage fetch failed: " + request.error);
+        callback(null);
+    }
+    else
+    {
+        string json = request.downloadHandler.text;
+        StorageData data = JsonConvert.DeserializeObject<StorageData>(json);
+        callback(data);
+    }
+}
+
+
 
 
 }

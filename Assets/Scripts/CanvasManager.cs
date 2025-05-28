@@ -92,7 +92,8 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private Button _tier1_MaterialsUserProductionHide_Button;
     private GridCell currentGridCell;
 
-    [SerializeField] private DatabaseManager databaseManager;
+    [SerializeField] private DatabaseManager _databaseManager;
+    [SerializeField] private StorageManager _storageManager;
 
     private bool _buyLandInProgress = false;
 
@@ -129,6 +130,7 @@ public class CanvasManager : MonoBehaviour
         _tier1_Canvas.enabled = true;
 
         _tier1_Coordinates_Text.text = $"X = {gridCell.X} : Y = {gridCell.Y}";
+        _tier1_OwnerOfTheGrid_Text.text = hasNoOwner ? "This land is not owned" : $"Owner: {gridCell._ownerNickname}";
 
         //Debug.Log($"Current User ID: {currentUserId}, Grid Owner ID: {gridOwnerId}, Can Buy: {hasNoOwner && !isOwner}");
 
@@ -153,7 +155,7 @@ public class CanvasManager : MonoBehaviour
         _tier1PotentialMaterial_Water_Text.text = $"Water: {gridCell.MaterialPotentialWater}";
         _tier1_PotentialMaterialHide_Button.onClick.AddListener(() => HidePotentialMaterialCanvas());
 
-        //currentGridCell.DebugPrint();
+        currentGridCell.DebugPrint();
 
         _tier1_BuyLand_Button.interactable = hasNoOwner && !isOwner;
 
@@ -216,8 +218,6 @@ public class CanvasManager : MonoBehaviour
         _tier1PotentialMateria_Water_Button.onClick.RemoveAllListeners();
         _tier1PotentialMateria_Water_Button.onClick.AddListener(() => OnStartProductionClicked(MaterialType.Water));
 
-
-
     }
 
 
@@ -271,7 +271,7 @@ public class CanvasManager : MonoBehaviour
         _buyLandInProgress = true;
         Debug.Log("🛒 BuyLand button pressed.");
 
-        StartCoroutine(databaseManager.BuyLandRequest(playerId, gridId, (updatedData) =>
+        StartCoroutine(_databaseManager.BuyLandRequest(playerId, gridId, (updatedData) =>
         {
             if (updatedData != null)
             {
@@ -319,7 +319,7 @@ public class CanvasManager : MonoBehaviour
 
         Debug.Log($"⛏ Sending start production request for {material} on grid {gridId}");
 
-        StartCoroutine(databaseManager.StartProductionRequest(playerId, gridId, material, (updatedData) =>
+        StartCoroutine(_databaseManager.StartProductionRequest(playerId, gridId, material, (updatedData) =>
         {
             if (updatedData != null)
             {
@@ -375,18 +375,23 @@ public class CanvasManager : MonoBehaviour
         HideAllCanvases();
         _tier1_MaterialsUserProduction_Canvas.enabled = true;
 
-        _tier1MaterialsUserProduction_Coordinates_Text.text = PlayerPrefs.GetString("Nickname");
-        _tier1MaterialsUserProduction_Wood_Text.text = $"Wood: {currentGridCell.MaterialActualWood}";
-        _tier1MaterialsUserProduction_Stone_Text.text = $"Stone: {currentGridCell.MaterialActualStone}";
-        _tier1MaterialsUserProduction_Iron_Text.text = $"Iron: {currentGridCell.MaterialActualIron}";
-        _tier1MaterialsUserProduction_Gold_Text.text = $"Gold: {currentGridCell.MaterialActualGold}";
-        _tier1MaterialsUserProduction_Copper_Text.text = $"Copper: {currentGridCell.MaterialActualCopper}";
-        _tier1MaterialsUserProduction_Coal_Text.text = $"Coal: {currentGridCell.MaterialActualCoal}";
-        _tier1MaterialsUserProduction_Oil_Text.text = $"Oil: {currentGridCell.MaterialActualOil}";
-        _tier1MaterialsUserProduction_Uranium_Text.text = $"Uranium: {currentGridCell.MaterialActualUranium}";
-        _tier1MaterialsUserProduction_Food_Text.text = $"Food: {currentGridCell.MaterialActualFood}";
-        _tier1MaterialsUserProduction_Water_Text.text = $"Water: {currentGridCell.MaterialActualWater}";
+        UpdateTier1UIMaterials();
 
+    }
+
+    public void UpdateTier1UIMaterials()
+    {
+        _tier1MaterialsUserProduction_Coordinates_Text.text = PlayerPrefs.GetString("Nickname");
+        _tier1MaterialsUserProduction_Wood_Text.text = $"Wood: {_storageManager._wood}";
+        _tier1MaterialsUserProduction_Stone_Text.text = $"Stone: {_storageManager._stone}";
+        _tier1MaterialsUserProduction_Iron_Text.text = $"Iron: {_storageManager._iron}";
+        _tier1MaterialsUserProduction_Gold_Text.text = $"Gold: {_storageManager._gold}";
+        _tier1MaterialsUserProduction_Copper_Text.text = $"Copper: {_storageManager._copper}";
+        _tier1MaterialsUserProduction_Coal_Text.text = $"Coal: {_storageManager._coal}";
+        _tier1MaterialsUserProduction_Oil_Text.text = $"Oil: {_storageManager._oil}";
+        _tier1MaterialsUserProduction_Uranium_Text.text = $"Uranium: {_storageManager._uranium}";
+        _tier1MaterialsUserProduction_Food_Text.text = $"Food: {_storageManager._food}";
+        _tier1MaterialsUserProduction_Water_Text.text = $"Water: {_storageManager._water}";
     }
 
     private void HideAllCanvases()
