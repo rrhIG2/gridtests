@@ -28,14 +28,14 @@ def generate_material_data():
         actual = round(potential * random.randint(5, 20) * 0.1, 2)
         data[f'material_potential_{material}'] = potential
         data[f'material_actual_{material}'] = actual
-        data[f'material_{material}_is_mined'] = 0  # always 0
+        data[f'material_{material}_is_mined'] = 0  # always 0 at start
     return data
 
 # Connect to the database
 conn = mysql.connector.connect(**DB_CONFIG)
 cursor = conn.cursor()
 
-# Prepare column list
+# Prepare column list including the new 'comment' column
 column_parts = ['grid_x', 'grid_y', 'lat_sec', 'lon_sec', 'created_at', 'updated_at']
 for material in materials:
     column_parts += [
@@ -43,6 +43,7 @@ for material in materials:
         f'material_actual_{material}',
         f'material_{material}_is_mined'
     ]
+column_parts.append('comment')
 
 columns = ', '.join(column_parts)
 placeholders = ', '.join(['%s'] * len(column_parts))
@@ -56,11 +57,19 @@ now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 for idx, (x, y) in enumerate(grid_coordinates):
     material_data = generate_material_data()
 
-    values = [x, y, None, None, now, now]  # lat_sec, lon_sec = NULL
+    values = [x, y, None, None, now, now]
+    comment_parts = []
+
     for material in materials:
-        values.append(material_data[f'material_potential_{material}'])
-        values.append(material_data[f'material_actual_{material}'])
-        values.append(material_data[f'material_{material}_is_mined'])
+        potential = material_data[f'material_potential_{material}']
+        actual = material_data[f'material_actual_{material}']
+        is_mined = material_data[f'material_{material}_is_mined']
+
+        values.extend([potential, actual, is_mined])
+        comment_parts.append(f"{material}={actual}")
+
+    comment = "At start: " + ', '.join(comment_parts)
+    values.append(comment)
 
     batch_data.append(values)
 
@@ -79,4 +88,4 @@ if batch_data:
 cursor.close()
 conn.close()
 
-print("✅ Grid population completed without lat/lon, mining, or production type.")
+print("✅ Grid population completed with per-material comment.")
