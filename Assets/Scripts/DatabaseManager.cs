@@ -196,36 +196,7 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    public IEnumerator UpdateMaterialOnBackend(int gridX, int gridY, MaterialType material, double minedAmount)
-    {
-        var requestData = new
-        {
-            grid_x = gridX,
-            grid_y = gridY,
-            material = material.ToString().ToLower(),
-            mined_amount = minedAmount
-        };
-
-        string json = JsonConvert.SerializeObject(requestData);
-
-        UnityWebRequest request = new UnityWebRequest(_serverUrl + "updateMaterial.php", "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            Debug.Log($"✅ Successfully updated material: {material} for Grid ({gridX}, {gridY}) - {request.downloadHandler.text}");
-        }
-        else
-        {
-            Debug.LogError($"❌ Failed to update material: {request.error}");
-        }
-    }
-
+    
     public IEnumerator BuyLandRequest(int userId, int gridId, System.Action<GridData> callback)
     {
         string url = _serverUrl + "buy_land.php";
@@ -348,6 +319,7 @@ public IEnumerator FetchUserStorage(int userId, System.Action<StorageData> callb
     else
     {
         string json = request.downloadHandler.text;
+        Debug.Log("📥 Response from backend: " + json);
         StorageData data = JsonConvert.DeserializeObject<StorageData>(json);
         callback(data);
     }

@@ -17,6 +17,18 @@ public class StorageManager : MonoBehaviour
     [SerializeField] public float _water { get; private set; }
     [SerializeField] public float _iron { get; private set; }
 
+    [Header("Mining Rates")]
+    [SerializeField] public float _miningWood { get; private set; }
+    [SerializeField] public float _miningStone { get; private set; }
+    [SerializeField] public float _miningGold { get; private set; }
+    [SerializeField] public float _miningCopper { get; private set; }
+    [SerializeField] public float _miningCoal { get; private set; }
+    [SerializeField] public float _miningOil { get; private set; }
+    [SerializeField] public float _miningUranium { get; private set; }
+    [SerializeField] public float _miningFood { get; private set; }
+    [SerializeField] public float _miningWater { get; private set; }
+    [SerializeField] public float _miningIron { get; private set; }
+
     public void RefreshStorage()
     {
         int userId = PlayerPrefs.GetInt("UserId", -1);
@@ -25,6 +37,8 @@ public class StorageManager : MonoBehaviour
             Debug.LogWarning("❌ Invalid user ID.");
             return;
         }
+
+        Debug.Log("🔄 Calling RefreshStorage()");
 
         StartCoroutine(databaseManager.FetchUserStorage(userId, (data) =>
         {
@@ -44,6 +58,17 @@ public class StorageManager : MonoBehaviour
             _food = data.storage_actual_food ?? 0f;
             _water = data.storage_actual_water ?? 0f;
             _iron = data.storage_actual_iron ?? 0f;
+
+            _miningWood = data.mining_value_wood ?? 0f;
+            _miningStone = data.mining_value_stone ?? 0f;
+            _miningGold = data.mining_value_gold ?? 0f;
+            _miningCopper = data.mining_value_stone ?? 0f;
+            _miningCoal = data.mining_value_coal ?? 0f;
+            _miningOil = data.mining_value_oil ?? 0f;
+            _miningUranium = data.mining_value_uranium ?? 0f;
+            _miningFood = data.mining_value_food ?? 0f;
+            _miningWater = data.mining_value_water ?? 0f;
+            _miningIron = data.mining_value_iron ?? 0f;
 
 
             Debug.Log("✅ Storage updated.");

@@ -103,7 +103,8 @@ public class CanvasManager : MonoBehaviour
         HideAllCanvases();
         _tier1Header_Canvas.enabled = true;
 
-        _tier1Header_UserNickname_Text.text = PlayerPrefs.GetString("Nickname");
+        string nickname = PlayerPrefs.GetString("Nickname");
+        _tier1Header_UserNickname_Text.text = $"User: {nickname}";
         _tier1Header_ShowMaterials_Button.onClick.AddListener(() => ShowTier1UIMaterials());
         _tier1_MaterialsUserProductionHide_Button.onClick.AddListener(() => HideTier1UIMaterials());
 
@@ -381,18 +382,21 @@ public class CanvasManager : MonoBehaviour
 
     public void UpdateTier1UIMaterials()
     {
-        _tier1MaterialsUserProduction_Coordinates_Text.text = PlayerPrefs.GetString("Nickname");
-        _tier1MaterialsUserProduction_Wood_Text.text = $"Wood: {_storageManager._wood}";
-        _tier1MaterialsUserProduction_Stone_Text.text = $"Stone: {_storageManager._stone}";
-        _tier1MaterialsUserProduction_Iron_Text.text = $"Iron: {_storageManager._iron}";
-        _tier1MaterialsUserProduction_Gold_Text.text = $"Gold: {_storageManager._gold}";
-        _tier1MaterialsUserProduction_Copper_Text.text = $"Copper: {_storageManager._copper}";
-        _tier1MaterialsUserProduction_Coal_Text.text = $"Coal: {_storageManager._coal}";
-        _tier1MaterialsUserProduction_Oil_Text.text = $"Oil: {_storageManager._oil}";
-        _tier1MaterialsUserProduction_Uranium_Text.text = $"Uranium: {_storageManager._uranium}";
-        _tier1MaterialsUserProduction_Food_Text.text = $"Food: {_storageManager._food}";
-        _tier1MaterialsUserProduction_Water_Text.text = $"Water: {_storageManager._water}";
+        string nickname = PlayerPrefs.GetString("Nickname");
+        _tier1MaterialsUserProduction_Coordinates_Text.text = $"User: {nickname}";
+
+        _tier1MaterialsUserProduction_Wood_Text.text = $"Wood: +{_storageManager._miningWood}/10s | {_storageManager._wood}";
+        _tier1MaterialsUserProduction_Stone_Text.text = $"Stone: +{_storageManager._miningStone}/10s | {_storageManager._stone}";
+        _tier1MaterialsUserProduction_Iron_Text.text = $"Iron: +{_storageManager._miningIron}/10s | {_storageManager._iron}";
+        _tier1MaterialsUserProduction_Gold_Text.text = $"Gold: +{_storageManager._miningGold}/10s | {_storageManager._gold}";
+        _tier1MaterialsUserProduction_Copper_Text.text = $"Copper: +{_storageManager._miningCopper}/10s | {_storageManager._copper}";
+        _tier1MaterialsUserProduction_Coal_Text.text = $"Coal: +{_storageManager._miningCoal}/10s | {_storageManager._coal}";
+        _tier1MaterialsUserProduction_Oil_Text.text = $"Oil: +{_storageManager._miningOil}/10s | {_storageManager._oil}";
+        _tier1MaterialsUserProduction_Uranium_Text.text = $"Uranium: +{_storageManager._miningUranium}/10s | {_storageManager._uranium}";
+        _tier1MaterialsUserProduction_Food_Text.text = $"Food: +{_storageManager._miningFood}/10s | {_storageManager._food}";
+        _tier1MaterialsUserProduction_Water_Text.text = $"Water: +{_storageManager._miningWater}/10s | {_storageManager._water}";
     }
+
 
     private void HideAllCanvases()
     {
